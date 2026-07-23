@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { authClient } from '@/lib/auth-client';
-import { ROUTES } from '@/utils/constants';
+import { ROUTES, ROLES } from '@/utils/constants';
 import { Button } from '@heroui/react';
 import NotificationBell from '@/components/dashboard/NotificationBell';
 
@@ -24,8 +24,6 @@ export default function Navbar() {
     if (role === ROLES.CREATOR) return ROUTES.CREATOR_DASHBOARD;
     return ROUTES.SUPPORTER_DASHBOARD;
   };
-
-  const ROLES = { ADMIN: 'admin', CREATOR: 'creator', SUPPORTER: 'supporter' };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">

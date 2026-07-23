@@ -4,7 +4,7 @@ import { useMyContributions } from '@/hooks/useContributions';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import EmptyState from '@/components/shared/EmptyState';
 import Pagination from '@/components/shared/Pagination';
-import { Card, CardBody, Chip } from '@heroui/react';
+import { Card, CardContent, Chip } from '@heroui/react';
 import { useState } from 'react';
 
 export default function SupporterContributions() {
@@ -28,7 +28,7 @@ export default function SupporterContributions() {
           <div className="space-y-3">
             {contributions.map((c) => (
               <Card key={c._id}>
-                <CardBody className="flex flex-row items-center gap-4 p-4">
+                <CardContent className="flex flex-row items-center gap-4 p-4">
                   {c.campaign?.image ? (
                     <img src={c.campaign.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
                   ) : (
@@ -49,7 +49,7 @@ export default function SupporterContributions() {
                       {c.paymentStatus}
                     </Chip>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

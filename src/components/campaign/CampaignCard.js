@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { formatCurrency, getProgressPercent, getDaysLeft, formatDate } from '@/utils/formatters';
 import { ROUTES } from '@/utils/constants';
-import { Card, CardBody, Progress } from '@heroui/react';
+import { Card, CardContent, ProgressBar } from '@heroui/react';
 
 export default function CampaignCard({ campaign, index = 0 }) {
   const progress = getProgressPercent(campaign.currentAmount, campaign.goalAmount);
@@ -44,12 +44,12 @@ export default function CampaignCard({ campaign, index = 0 }) {
             )}
           </div>
 
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">{campaign.title}</h3>
             <p className="text-sm text-gray-500 line-clamp-2 mb-3">{campaign.shortDescription || campaign.description}</p>
 
             <div className="mb-3">
-              <Progress
+              <ProgressBar
                 value={progress}
                 color={progress >= 100 ? 'success' : 'primary'}
                 size="sm"
@@ -71,7 +71,7 @@ export default function CampaignCard({ campaign, index = 0 }) {
               <span>{campaign.backersCount || 0} backers</span>
               <span>{daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}</span>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </Link>
     </motion.div>

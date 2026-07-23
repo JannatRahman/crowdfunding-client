@@ -5,7 +5,7 @@ import { usePendingWithdrawals, useApproveWithdrawal, useRejectWithdrawal } from
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import Pagination from '@/components/shared/Pagination';
 import ConfirmModal from '@/components/shared/ConfirmModal';
-import { Button, Card, CardBody, Chip, Textarea } from '@heroui/react';
+import { Button, Card, CardContent, Chip, TextArea } from '@heroui/react';
 
 export default function AdminWithdrawals() {
   const [page, setPage] = useState(1);
@@ -40,7 +40,7 @@ export default function AdminWithdrawals() {
           <div className="space-y-3">
             {withdrawals.map((w) => (
               <Card key={w._id}>
-                <CardBody className="p-4 space-y-3">
+                <CardContent className="p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium text-gray-900">{w.campaign?.title || 'Campaign'}</p>
@@ -64,7 +64,7 @@ export default function AdminWithdrawals() {
                       Reject
                     </Button>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -80,7 +80,7 @@ export default function AdminWithdrawals() {
         message={
           <div className="space-y-3">
             <p>Are you sure you want to {actionType} this withdrawal?</p>
-            <Textarea
+            <TextArea
               placeholder="Add a note (optional)"
               value={adminNote}
               onValueChange={setAdminNote}

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useAdminReports, useUpdateReport } from '@/hooks/useAdmin';
 import { formatDate } from '@/utils/formatters';
 import Pagination from '@/components/shared/Pagination';
-import { Button, Card, CardBody, Chip, Textarea, Select, SelectItem } from '@heroui/react';
+import { Button, Card, CardContent, Chip, TextArea } from '@heroui/react';
 
 const statusItems = [
   { key: '', label: 'All Statuses' },
@@ -44,15 +44,15 @@ export default function AdminReports() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
 
-      <Select
-        selectedKeys={statusFilter ? [statusFilter] : []}
-        onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] || '')}
-        className="w-48"
+      <select
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+        className="w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         {statusItems.map((s) => (
-          <SelectItem key={s.key}>{s.label}</SelectItem>
+          <option key={s.key} value={s.key}>{s.label}</option>
         ))}
-      </Select>
+      </select>
 
       {reports.length === 0 ? (
         <p className="text-gray-500 text-center py-10">No reports found</p>
@@ -61,7 +61,7 @@ export default function AdminReports() {
           <div className="space-y-3">
             {reports.map((r) => (
               <Card key={r._id}>
-                <CardBody className="p-4 space-y-3">
+                <CardContent className="p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium text-gray-900 capitalize">
@@ -91,7 +91,7 @@ export default function AdminReports() {
                       </Button>
                     </div>
                   )}
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>
@@ -103,7 +103,7 @@ export default function AdminReports() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 space-y-4">
             <h3 className="text-lg font-semibold">Update Report</h3>
-            <Textarea
+            <TextArea
               placeholder="Admin note (optional)"
               value={resolveNote}
               onValueChange={setResolveNote}

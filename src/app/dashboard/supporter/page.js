@@ -6,7 +6,7 @@ import { formatCurrency, formatDate } from '@/utils/formatters';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import EmptyState from '@/components/shared/EmptyState';
 import Pagination from '@/components/shared/Pagination';
-import { Card, CardBody, Chip } from '@heroui/react';
+import { Card, CardContent, Chip } from '@heroui/react';
 import Link from 'next/link';
 import { ROUTES } from '@/utils/constants';
 
@@ -24,26 +24,26 @@ export default function SupporterDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-blue-600">{data?.pagination?.total || 0}</p>
             <p className="text-sm text-gray-500">Total Contributions</p>
-          </CardBody>
+          </CardContent>
         </Card>
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-green-600">
               {formatCurrency(contributions.reduce((sum, c) => sum + (c.paymentStatus === 'completed' ? c.amount : 0), 0))}
             </p>
             <p className="text-sm text-gray-500">Total Contributed</p>
-          </CardBody>
+          </CardContent>
         </Card>
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-purple-600">
               {new Set(contributions.map((c) => c.campaignId)).size}
             </p>
             <p className="text-sm text-gray-500">Campaigns Backed</p>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
 
@@ -66,7 +66,7 @@ export default function SupporterDashboard() {
           <div className="space-y-3">
             {contributions.map((c) => (
               <Card key={c._id}>
-                <CardBody className="flex flex-row items-center gap-4 p-4">
+                <CardContent className="flex flex-row items-center gap-4 p-4">
                   {c.campaign?.image ? (
                     <img src={c.campaign.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
                   ) : (
@@ -88,7 +88,7 @@ export default function SupporterDashboard() {
                       {c.paymentStatus}
                     </Chip>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

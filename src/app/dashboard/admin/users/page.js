@@ -6,7 +6,7 @@ import ConfirmModal from '@/components/shared/ConfirmModal';
 import Pagination from '@/components/shared/Pagination';
 import { formatDate } from '@/utils/formatters';
 import { useDebounce } from '@/hooks/useDebounce';
-import { Button, Card, CardBody, Chip, Input, Select, SelectItem } from '@heroui/react';
+import { Button, Card, CardContent, Chip, Input } from '@heroui/react';
 
 const roleItems = [
   { key: '', label: 'All Roles' },
@@ -45,21 +45,21 @@ export default function AdminUsers() {
           onValueChange={setSearch}
           className="flex-1"
         />
-        <Select
-          selectedKeys={roleFilter ? [roleFilter] : []}
-          onSelectionChange={(keys) => setRoleFilter(Array.from(keys)[0] || '')}
-          className="w-full sm:w-48"
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="w-full sm:w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           {roleItems.map((r) => (
-            <SelectItem key={r.key}>{r.label}</SelectItem>
+            <option key={r.key} value={r.key}>{r.label}</option>
           ))}
-        </Select>
+        </select>
       </div>
 
       <div className="space-y-3">
         {users.map((u) => (
           <Card key={u._id}>
-            <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
+            <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-medium">
                 {u.name?.charAt(0)?.toUpperCase() || '?'}
               </div>
@@ -72,26 +72,25 @@ export default function AdminUsers() {
                 <Chip size="sm" color={roleColor[u.role]} variant="flat">
                   {u.role}
                 </Chip>
-                <Select
-                  size="sm"
-                  selectedKeys={[u.role]}
-                  onSelectionChange={(keys) => {
-                    const newRole = Array.from(keys)[0];
+                <select
+                  value={u.role}
+                  onChange={(e) => {
+                    const newRole = e.target.value;
                     if (newRole && newRole !== u.role) {
                       changeRole.mutate({ id: u._id, role: newRole });
                     }
                   }}
-                  className="w-32"
+                  className="w-32 p-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <SelectItem key="supporter">Supporter</SelectItem>
-                  <SelectItem key="creator">Creator</SelectItem>
-                  <SelectItem key="admin">Admin</SelectItem>
-                </Select>
+                  <option value="supporter">Supporter</option>
+                  <option value="creator">Creator</option>
+                  <option value="admin">Admin</option>
+                </select>
                 <Button size="sm" variant="light" color="danger" onPress={() => setDeleteId(u._id)}>
                   Delete
                 </Button>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         ))}
       </div>

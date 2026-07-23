@@ -6,7 +6,7 @@ import EmptyState from '@/components/shared/EmptyState';
 import ConfirmModal from '@/components/shared/ConfirmModal';
 import Pagination from '@/components/shared/Pagination';
 import Link from 'next/link';
-import { Button, Card, CardBody, Chip, Progress } from '@heroui/react';
+import { Button, Card, CardContent, Chip, ProgressBar } from '@heroui/react';
 import { useState } from 'react';
 import { ROUTES } from '@/utils/constants';
 
@@ -50,7 +50,7 @@ export default function CreatorCampaigns() {
           <div className="space-y-3">
             {campaigns.map((c) => (
               <Card key={c._id}>
-                <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
+                <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
                   {c.images?.[0] ? (
                     <img src={c.images[0]} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   ) : (
@@ -59,7 +59,7 @@ export default function CreatorCampaigns() {
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-900 truncate">{c.title}</p>
                     <div className="mt-1 max-w-xs">
-                      <Progress value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
+                      <ProgressBar value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       {formatCurrency(c.currentAmount)} / {formatCurrency(c.goalAmount)} &middot; {getDaysLeft(c.endDate)} days left
@@ -86,7 +86,7 @@ export default function CreatorCampaigns() {
                       Delete
                     </Button>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

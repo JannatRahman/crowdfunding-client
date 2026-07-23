@@ -3,7 +3,7 @@
 import { useAdminStats } from '@/hooks/useAdmin';
 import DashboardStats from '@/components/dashboard/DashboardStats';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@heroui/react';
 import Link from 'next/link';
 import { ROUTES } from '@/utils/constants';
 
@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardBody className="p-6">
+          <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Recent Campaigns</h2>
               <Link href={ROUTES.ADMIN_CAMPAIGNS} className="text-sm text-blue-600 hover:underline">View All</Link>
@@ -42,11 +42,11 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-500 text-center py-4">No campaigns yet</p>
               )}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <Card>
-          <CardBody className="p-6">
+          <CardContent className="p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Recent Contributions</h2>
             </div>
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
                 <p className="text-sm text-gray-500 text-center py-4">No contributions yet</p>
               )}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Progress } from '@heroui/react';
+import { ProgressBar as HeroProgressBar } from '@heroui/react';
 import { formatCurrency, getProgressPercent } from '@/utils/formatters';
 
 export default function ProgressBar({ current, goal, showLabel = true }) {
@@ -6,7 +6,7 @@ export default function ProgressBar({ current, goal, showLabel = true }) {
 
   return (
     <div className="w-full">
-      <Progress
+      <HeroProgressBar
         value={percent}
         color={percent >= 100 ? 'success' : 'primary'}
         size="md"

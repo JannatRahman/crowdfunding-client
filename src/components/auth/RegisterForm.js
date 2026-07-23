@@ -6,7 +6,7 @@ import { registerSchema } from '@/utils/validations';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button, Input, Radio, RadioGroup } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
 import Link from 'next/link';
 
@@ -94,14 +94,26 @@ export default function RegisterForm() {
 
         <div>
           <p className="text-sm font-medium text-gray-700 mb-2">I want to</p>
-          <RadioGroup
-            orientation="horizontal"
-            value={selectedRole}
-            {...register('role')}
-          >
-            <Radio value="supporter">Support campaigns</Radio>
-            <Radio value="creator">Create campaigns</Radio>
-          </RadioGroup>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                value="supporter"
+                {...register('role')}
+                className="w-4 h-4 text-blue-600"
+              />
+              <span className="text-sm text-gray-700">Support campaigns</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                value="creator"
+                {...register('role')}
+                className="w-4 h-4 text-blue-600"
+              />
+              <span className="text-sm text-gray-700">Create campaigns</span>
+            </label>
+          </div>
         </div>
 
         <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>

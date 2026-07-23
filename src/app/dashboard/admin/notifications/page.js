@@ -2,7 +2,7 @@
 
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from '@/hooks/useNotifications';
 import { formatRelativeTime } from '@/utils/formatters';
-import { Button, Card, CardBody } from '@heroui/react';
+import { Button, Card, CardContent } from '@heroui/react';
 import Pagination from '@/components/shared/Pagination';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ export default function AdminNotifications() {
           <div className="space-y-3">
             {notifications.map((n) => (
               <Card key={n._id}>
-                <CardBody
+                <CardContent
                   className={`flex items-start gap-3 p-4 cursor-pointer ${!n.read ? 'bg-blue-50/50' : ''}`}
                   onClick={() => !n.read && markRead.mutate(n._id)}
                 >
@@ -55,7 +55,7 @@ export default function AdminNotifications() {
                     <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(n.createdAt)}</p>
                   </div>
                   {!n.read && <div className="w-2 h-2 bg-blue-600 rounded-full mt-2" />}
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

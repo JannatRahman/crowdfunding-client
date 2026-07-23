@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useCreateCampaign } from '@/hooks/useCampaigns';
 import CampaignForm from '@/components/campaign/CampaignForm';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
 
 export default function NewCampaignPage() {
@@ -20,9 +20,9 @@ export default function NewCampaignPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Create New Campaign</h1>
       <Card>
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           <CampaignForm onSubmit={handleSubmit} isLoading={createCampaign.isPending} submitText="Create Campaign" />
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );

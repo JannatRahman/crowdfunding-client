@@ -7,7 +7,7 @@ import WithdrawalForm from '@/components/dashboard/WithdrawalForm';
 import EmptyState from '@/components/shared/EmptyState';
 import Pagination from '@/components/shared/Pagination';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import { Button, Card, CardBody, Chip } from '@heroui/react';
+import { Button, Card, CardContent, Chip } from '@heroui/react';
 
 export default function CreatorWithdrawals() {
   const [page, setPage] = useState(1);
@@ -43,7 +43,7 @@ export default function CreatorWithdrawals() {
           <div className="space-y-3">
             {withdrawals.map((w) => (
               <Card key={w._id}>
-                <CardBody className="flex flex-row items-center gap-4 p-4">
+                <CardContent className="flex flex-row items-center gap-4 p-4">
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{w.campaign?.title || 'Campaign'}</p>
                     <p className="text-sm text-gray-500">{formatDate(w.createdAt)}</p>
@@ -55,7 +55,7 @@ export default function CreatorWithdrawals() {
                       {w.status}
                     </Chip>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

@@ -3,7 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useCampaign, useUpdateCampaign } from '@/hooks/useCampaigns';
 import CampaignForm from '@/components/campaign/CampaignForm';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@heroui/react';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { ROUTES } from '@/utils/constants';
 
@@ -28,7 +28,7 @@ export default function EditCampaignPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-900">Edit Campaign</h1>
       <Card>
-        <CardBody className="p-6">
+        <CardContent className="p-6">
           <CampaignForm
             initialData={{
               title: campaign.title,
@@ -42,7 +42,7 @@ export default function EditCampaignPage() {
             isLoading={updateCampaign.isPending}
             submitText="Update Campaign"
           />
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );

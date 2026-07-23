@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { formatCurrency } from '@/utils/formatters';
+import SimpleModal, { SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
@@ -33,15 +34,15 @@ function CheckoutFormInner({ amount, onSuccess, onClose }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <ModalBody>
+      <SimpleModalBody>
         <PaymentElement />
-      </ModalBody>
-      <ModalFooter>
+      </SimpleModalBody>
+      <SimpleModalFooter>
         <Button variant="light" onPress={onClose}>Cancel</Button>
         <Button type="submit" color="primary" isLoading={isProcessing} isDisabled={!stripe}>
           Pay {formatCurrency(amount)}
         </Button>
-      </ModalFooter>
+      </SimpleModalFooter>
     </form>
   );
 }

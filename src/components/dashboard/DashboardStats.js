@@ -2,7 +2,7 @@
 
 import { useAdminStats } from '@/hooks/useAdmin';
 import { formatCurrency } from '@/utils/formatters';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@heroui/react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 const stats = [
@@ -25,7 +25,7 @@ export default function DashboardStats({ data, isLoading }) {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat) => (
         <Card key={stat.key}>
-          <CardBody className="flex flex-row items-center gap-4 p-4">
+          <CardContent className="flex flex-row items-center gap-4 p-4">
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${stat.color}`}>
               {stat.icon}
             </div>
@@ -38,7 +38,7 @@ export default function DashboardStats({ data, isLoading }) {
                 }
               </p>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       ))}
     </div>

@@ -5,7 +5,7 @@ import { useMyCampaigns } from '@/hooks/useCampaigns';
 import { formatCurrency, getProgressPercent, getDaysLeft, formatDate } from '@/utils/formatters';
 import EmptyState from '@/components/shared/EmptyState';
 import Link from 'next/link';
-import { Button, Card, CardBody, Chip, Progress } from '@heroui/react';
+import { Button, Card, CardContent, Chip, ProgressBar } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
 
 export default function CreatorDashboard() {
@@ -30,22 +30,22 @@ export default function CreatorDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-blue-600">{campaigns.length}</p>
             <p className="text-sm text-gray-500">Total Campaigns</p>
-          </CardBody>
+          </CardContent>
         </Card>
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-green-600">{formatCurrency(totalRaised)}</p>
             <p className="text-sm text-gray-500">Total Raised</p>
-          </CardBody>
+          </CardContent>
         </Card>
         <Card>
-          <CardBody className="p-4 text-center">
+          <CardContent className="p-4 text-center">
             <p className="text-3xl font-bold text-purple-600">{totalBackers}</p>
             <p className="text-sm text-gray-500">Total Backers</p>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
 
@@ -66,7 +66,7 @@ export default function CreatorDashboard() {
           <div className="space-y-3">
             {campaigns.map((c) => (
               <Card key={c._id}>
-                <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
+                <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
                   {c.images?.[0] ? (
                     <img src={c.images[0]} alt="" className="w-16 h-16 rounded-lg object-cover" />
                   ) : (
@@ -78,7 +78,7 @@ export default function CreatorDashboard() {
                     <p className="font-medium text-gray-900 truncate">{c.title}</p>
                     <p className="text-sm text-gray-500">Created {formatDate(c.createdAt)} &middot; {getDaysLeft(c.endDate)} days left</p>
                     <div className="mt-2 max-w-xs">
-                      <Progress value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
+                      <ProgressBar value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
                     </div>
                     <p className="text-xs text-gray-500 mt-1">
                       {formatCurrency(c.currentAmount)} of {formatCurrency(c.goalAmount)} &middot; {c.backersCount || 0} backers
@@ -96,7 +96,7 @@ export default function CreatorDashboard() {
                       <Button size="sm" variant="bordered">Edit</Button>
                     </Link>
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             ))}
           </div>

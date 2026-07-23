@@ -6,7 +6,7 @@ import { useFeatureCampaign } from '@/hooks/useAdmin';
 import { formatCurrency, getProgressPercent, formatDate } from '@/utils/formatters';
 import Pagination from '@/components/shared/Pagination';
 import { useDebounce } from '@/hooks/useDebounce';
-import { Button, Card, CardBody, Chip, Input, Progress } from '@heroui/react';
+import { Button, Card, CardContent, Chip, Input, ProgressBar } from '@heroui/react';
 
 export default function AdminCampaigns() {
   const [page, setPage] = useState(1);
@@ -32,7 +32,7 @@ export default function AdminCampaigns() {
       <div className="space-y-3">
         {campaigns.map((c) => (
           <Card key={c._id}>
-            <CardBody className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
+            <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
               {c.images?.[0] ? (
                 <img src={c.images[0]} alt="" className="w-14 h-14 rounded-lg object-cover" />
               ) : (
@@ -41,7 +41,7 @@ export default function AdminCampaigns() {
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-gray-900 truncate">{c.title}</p>
                 <div className="mt-1 max-w-xs">
-                  <Progress value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
+                  <ProgressBar value={getProgressPercent(c.currentAmount, c.goalAmount)} size="sm" />
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
                   {formatCurrency(c.currentAmount)} / {formatCurrency(c.goalAmount)} &middot; Created {formatDate(c.createdAt)}
@@ -60,7 +60,7 @@ export default function AdminCampaigns() {
                   {c.featured ? '★ Featured' : 'Feature'}
                 </Button>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         ))}
       </div>

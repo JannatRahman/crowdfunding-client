@@ -1,6 +1,6 @@
 'use client';
 
-import { Select, SelectItem, Input } from '@heroui/react';
+import { Input } from '@heroui/react';
 import { CAMPAIGN_CATEGORIES } from '@/utils/constants';
 
 const sortOptions = [
@@ -10,8 +10,6 @@ const sortOptions = [
   { key: 'most-backed', label: 'Most Backed' },
   { key: 'ending-soon', label: 'Ending Soon' },
 ];
-
-const categoryItems = CAMPAIGN_CATEGORIES.map((c) => ({ key: c.value, label: c.label }));
 
 export default function CampaignFilters({ filters, onFilterChange }) {
   return (
@@ -28,28 +26,26 @@ export default function CampaignFilters({ filters, onFilterChange }) {
         }
       />
 
-      <Select
-        placeholder="Category"
-        selectedKeys={filters.category ? [filters.category] : []}
-        onSelectionChange={(keys) => onFilterChange({ ...filters, category: Array.from(keys)[0] || '' })}
-        className="w-full sm:w-48"
+      <select
+        value={filters.category || ''}
+        onChange={(e) => onFilterChange({ ...filters, category: e.target.value })}
+        className="w-full sm:w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <SelectItem key="">All Categories</SelectItem>
-        {categoryItems.map((item) => (
-          <SelectItem key={item.key}>{item.label}</SelectItem>
+        <option value="">All Categories</option>
+        {CAMPAIGN_CATEGORIES.map((c) => (
+          <option key={c.value} value={c.value}>{c.label}</option>
         ))}
-      </Select>
+      </select>
 
-      <Select
-        placeholder="Sort by"
-        selectedKeys={[filters.sort || 'newest']}
-        onSelectionChange={(keys) => onFilterChange({ ...filters, sort: Array.from(keys)[0] || 'newest' })}
-        className="w-full sm:w-48"
+      <select
+        value={filters.sort || 'newest'}
+        onChange={(e) => onFilterChange({ ...filters, sort: e.target.value })}
+        className="w-full sm:w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         {sortOptions.map((item) => (
-          <SelectItem key={item.key}>{item.label}</SelectItem>
+          <option key={item.key} value={item.key}>{item.label}</option>
         ))}
-      </Select>
+      </select>
     </div>
   );
 }

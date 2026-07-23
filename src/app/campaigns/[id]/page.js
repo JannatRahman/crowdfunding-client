@@ -7,7 +7,8 @@ import { useCreateContribution } from '@/hooks/useContributions';
 import { useAuth } from '@/providers/AuthProvider';
 import api from '@/lib/api';
 import { formatCurrency, getProgressPercent, getDaysLeft, formatDate } from '@/utils/formatters';
-import { Button, Input, Textarea, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Chip } from '@heroui/react';
+import { Button, Input, TextArea, Chip } from '@heroui/react';
+import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
 import ProgressBar from '@/components/campaign/ProgressBar';
 import CountdownTimer from '@/components/campaign/CountdownTimer';
 import PaymentSummary from '@/components/payment/PaymentSummary';
@@ -200,39 +201,37 @@ export default function CampaignDetailPage() {
         </div>
       </div>
 
-      <Modal isOpen={contributeOpen} onClose={() => setContributeOpen(false)} size="lg">
-        <ModalContent>
-          <ModalHeader>Confirm Contribution</ModalHeader>
-          <ModalBody>
-            <PaymentSummary campaign={campaign} amount={parseFloat(amount || 0)} />
-            <Textarea
-              placeholder="Add a message (optional)"
-              value={message}
-              onValueChange={setMessage}
-              minRows={2}
+      <SimpleModal isOpen={contributeOpen} onClose={() => setContributeOpen(false)} size="lg">
+        <SimpleModalHeader>Confirm Contribution</SimpleModalHeader>
+        <SimpleModalBody>
+          <PaymentSummary campaign={campaign} amount={parseFloat(amount || 0)} />
+          <TextArea
+            placeholder="Add a message (optional)"
+            value={message}
+            onValueChange={setMessage}
+            minRows={2}
+          />
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={anonymous}
+              onChange={(e) => setAnonymous(e.target.checked)}
+              className="rounded"
             />
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-                className="rounded"
-              />
-              Make this contribution anonymous
-            </label>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setContributeOpen(false)}>Cancel</Button>
-            <Button
-              color="primary"
-              onPress={handleContribute}
-              isLoading={createContribution.isPending}
-            >
-              Proceed to Payment
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            Make this contribution anonymous
+          </label>
+        </SimpleModalBody>
+        <SimpleModalFooter>
+          <Button variant="light" onPress={() => setContributeOpen(false)}>Cancel</Button>
+          <Button
+            color="primary"
+            onPress={handleContribute}
+            isLoading={createContribution.isPending}
+          >
+            Proceed to Payment
+          </Button>
+        </SimpleModalFooter>
+      </SimpleModal>
 
       <ReportForm
         targetType="campaign"
