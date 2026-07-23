@@ -21,10 +21,11 @@
     "better-auth": "^1.6.24",
     "framer-motion": "^12.42.2",
     "mongodb": "^7.5.0",
-    "next": "16.2.11",
+    "next": "^16.2.11",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.82.0",
+    "stripe": "^22.3.2",
     "swiper": "^14.0.6",
     "zod": "^4.4.3"
   },
