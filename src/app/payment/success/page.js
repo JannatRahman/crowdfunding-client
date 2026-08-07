@@ -5,18 +5,42 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
+import api from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [status, setStatus] = useState('loading');
+  const [credits, setCredits] = useState(0);
 
   useEffect(() => {
+    let active = true;
     if (sessionId) {
-      setStatus('success');
+      api.post('/api/payments/verify-checkout-session', { sessionId })
+        .then((res) => {
+          if (!active) return;
+          if (res.data?.success) {
+            setStatus('success');
+            setCredits(res.data?.credits || 0);
+            toast.success(`Wallet upgraded! Added ${res.data?.credits || 0} credits.`);
+          } else {
+            setStatus('error');
+            toast.error('Payment verification failed.');
+          }
+        })
+        .catch((err) => {
+          if (!active) return;
+          console.error(err);
+          setStatus('error');
+          toast.error(err.response?.data?.error || 'Error verifying payment.');
+        });
     } else {
       setStatus('error');
     }
+    return () => {
+      active = false;
+    };
   }, [sessionId]);
 
   return (
@@ -25,7 +49,7 @@ function PaymentSuccessContent() {
         {status === 'loading' && (
           <>
             <div className="w-16 h-16 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-gray-500">Processing your payment...</p>
+            <p className="text-gray-500">Processing and verifying your payment...</p>
           </>
         )}
         {status === 'success' && (
@@ -34,12 +58,15 @@ function PaymentSuccessContent() {
               <span className="text-4xl">✅</span>
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Payment Successful!</h1>
-            <p className="text-gray-500 mb-8">
-              Thank you for your contribution! Your support makes a difference.
+            <p className="text-gray-500 mb-2">
+              Thank you for your purchase! {credits > 0 ? `${credits} credits have been added to your wallet.` : 'Your wallet is being updated.'}
+            </p>
+            <p className="text-gray-400 text-sm mb-8">
+              Session ID: {sessionId?.substring(0, 15)}...
             </p>
             <div className="flex gap-3 justify-center">
               <Link href={ROUTES.CAMPAIGNS}>
-                <Button color="primary">Explore More Campaigns</Button>
+                <Button color="primary">Explore Campaigns</Button>
               </Link>
               <Link href={ROUTES.DASHBOARD}>
                 <Button variant="bordered">Go to Dashboard</Button>
@@ -52,9 +79,9 @@ function PaymentSuccessContent() {
             <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-4xl">❌</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h1>
             <p className="text-gray-500 mb-8">
-              We couldn&apos;t verify your payment. Please check your email for confirmation.
+              We couldn&apos;t verify your payment. If you believe this is an error, please contact support.
             </p>
             <Link href={ROUTES.HOME}>
               <Button color="primary">Go Home</Button>
@@ -73,3 +100,4 @@ export default function PaymentSuccessPage() {
     </Suspense>
   );
 }
+

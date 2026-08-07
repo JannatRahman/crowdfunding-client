@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { uploadToImgBB } from '@/lib/imgbb';
 
 /**
- * Reusable image uploader backed by imgBB.
+ * Reusable image uploader backed by imgBB or direct URL inputs.
  *
  * Props:
  *  - value        {string}            current image URL (controlled)
@@ -29,6 +29,7 @@ export default function ImageUploader({
   error,
 }) {
   const inputRef = useRef(null);
+  const [mode, setMode] = useState(value && !value.includes('ibb.co') ? 'url' : 'upload');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
@@ -43,13 +44,11 @@ export default function ImageUploader({
   const handleFile = async (file) => {
     if (!file) return;
 
-    // Validate type
     if (!file.type.startsWith('image/')) {
       setUploadError('Please select a valid image file (JPEG, PNG, GIF, WebP, etc.)');
       return;
     }
 
-    // Validate size
     const maxBytes = maxSizeMB * 1024 * 1024;
     if (file.size > maxBytes) {
       setUploadError(`File is too large. Maximum size is ${maxSizeMB} MB.`);
@@ -60,7 +59,6 @@ export default function ImageUploader({
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Simulate visual progress while uploading
     const progressInterval = setInterval(() => {
       setUploadProgress((p) => Math.min(p + 12, 85));
     }, 200);
@@ -70,7 +68,6 @@ export default function ImageUploader({
       clearInterval(progressInterval);
       setUploadProgress(100);
       onChange(url);
-      // Brief flash of 100% before hiding
       setTimeout(() => setUploadProgress(0), 600);
     } catch (err) {
       clearInterval(progressInterval);
@@ -108,123 +105,190 @@ export default function ImageUploader({
   const displayError = error || uploadError;
 
   return (
-    <div className="w-full space-y-1.5">
+    <div className="w-full space-y-2">
       {label && (
-        <p className="text-sm font-medium text-gray-700">{label}</p>
+        <p className="text-sm font-bold text-cf-dark">{label}</p>
       )}
 
-      <div
-        onClick={() => !isUploading && inputRef.current?.click()}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        className={`
-          relative flex flex-col items-center justify-center gap-3 p-5
-          border-2 border-dashed rounded-2xl cursor-pointer
-          transition-all duration-200 select-none
-          ${isDragging
-            ? 'border-blue-500 bg-blue-50 scale-[1.01]'
-            : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50/50'
-          }
-          ${isUploading ? 'pointer-events-none opacity-70' : ''}
-          ${displayError ? 'border-red-400 bg-red-50/50' : ''}
-        `}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
-        aria-label={`Upload ${label}`}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          className="hidden"
-          onChange={handleInputChange}
-        />
-
-        {/* Preview + controls */}
-        {value ? (
-          <div className="flex flex-col items-center gap-3">
-            <div
-              className={`relative overflow-hidden border-2 border-white shadow-md ${isRound ? 'rounded-full' : 'rounded-xl'}`}
-              style={{ width: previewDimensions.width, height: previewDimensions.height }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={value}
-                alt="Preview"
-                className="w-full h-full object-cover"
-              />
-
-              {/* Remove button overlay */}
-              <button
-                type="button"
-                onClick={handleRemove}
-                className={`absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-150 ${isRound ? 'rounded-full' : 'rounded-xl'}`}
-                aria-label="Remove image"
-              >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="text-center">
-              <p className="text-xs font-semibold text-green-600 flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                Uploaded successfully
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">Click to replace</p>
-            </div>
-          </div>
-        ) : isUploading ? (
-          <div className="flex flex-col items-center gap-3 py-2">
-            {/* Spinner */}
-            <div className="w-10 h-10 rounded-full border-4 border-blue-200 border-t-blue-500 animate-spin" />
-            <p className="text-sm font-medium text-blue-600">Uploading…</p>
-
-            {/* Progress bar */}
-            {uploadProgress > 0 && (
-              <div className="w-36 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-500 rounded-full transition-all duration-200"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-2 py-2">
-            {/* Upload icon */}
-            <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${isDragging ? 'bg-blue-100' : 'bg-gray-100'} transition-colors`}>
-              <svg className={`w-6 h-6 ${isDragging ? 'text-blue-500' : 'text-gray-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-              </svg>
-            </div>
-            <div className="text-center">
-              <p className="text-sm font-semibold text-gray-700">
-                {isDragging ? 'Drop to upload' : 'Click or drag & drop'}
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                PNG, JPG, GIF, WebP · Max {maxSizeMB} MB
-              </p>
-            </div>
-          </div>
-        )}
+      {/* Tabs */}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => setMode('upload')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+            mode === 'upload'
+              ? 'bg-cf-dark text-cf-cream border-cf-dark shadow-sm'
+              : 'bg-white text-cf-brown border-cf-tan hover:bg-cf-cream/30'
+          }`}
+        >
+          📤 Upload Image
+        </button>
+        <button
+          type="button"
+          onClick={() => setMode('url')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+            mode === 'url'
+              ? 'bg-cf-dark text-cf-cream border-cf-dark shadow-sm'
+              : 'bg-white text-cf-brown border-cf-tan hover:bg-cf-cream/30'
+          }`}
+        >
+          🔗 Image URL
+        </button>
       </div>
 
+      {mode === 'upload' ? (
+        <div
+          onClick={() => !isUploading && inputRef.current?.click()}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`
+            relative flex flex-col items-center justify-center gap-3 p-5
+            border-2 border-dashed rounded-2xl cursor-pointer
+            transition-all duration-200 select-none
+            ${isDragging
+              ? 'border-cf-dark bg-cf-cream/40 scale-[1.01]'
+              : 'border-cf-tan bg-white hover:border-cf-brown hover:bg-cf-cream/10'
+            }
+            ${isUploading ? 'pointer-events-none opacity-70' : ''}
+            ${displayError ? 'border-red-400 bg-red-50/50' : ''}
+          `}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+          aria-label={`Upload ${label}`}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={handleInputChange}
+          />
+
+          {value ? (
+            <div className="flex flex-col items-center gap-3">
+              <div
+                className={`relative overflow-hidden border-2 border-white shadow-md ${isRound ? 'rounded-full' : 'rounded-xl'}`}
+                style={{ width: previewDimensions.width, height: previewDimensions.height }}
+              >
+                <img
+                  src={value}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  className={`absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-150 ${isRound ? 'rounded-full' : 'rounded-xl'}`}
+                  aria-label="Remove image"
+                >
+                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="text-center">
+                <p className="text-xs font-semibold text-green-600 flex items-center gap-1">
+                  ✓ Uploaded successfully
+                </p>
+                <p className="text-[10px] text-gray-400 mt-0.5">Click to replace file</p>
+              </div>
+            </div>
+          ) : isUploading ? (
+            <div className="flex flex-col items-center gap-3 py-2">
+              <div className="w-8 h-8 rounded-full border-4 border-cf-tan border-t-cf-dark animate-spin" />
+              <p className="text-xs font-semibold text-cf-dark">Uploading…</p>
+              {uploadProgress > 0 && (
+                <div className="w-32 h-1 bg-cf-tan rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-cf-dark rounded-full transition-all duration-200"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-2 py-2">
+              <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${isDragging ? 'bg-cf-cream' : 'bg-cf-cream/50'} transition-colors`}>
+                <svg className="w-5 h-5 text-cf-brown" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-bold text-cf-brown">
+                  {isDragging ? 'Drop to upload' : 'Click or drag & drop'}
+                </p>
+                <p className="text-[10px] text-gray-400 mt-0.5">
+                  PNG, JPG, WebP · Max {maxSizeMB} MB
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Paste direct image link (e.g. https://domain.com/pic.png)"
+              value={value || ''}
+              onChange={(e) => onChange(e.target.value)}
+              className="w-full px-4 py-3 bg-white border border-cf-tan rounded-xl text-sm focus:border-cf-dark focus:outline-none placeholder-cf-brown/40 shadow-sm transition-all"
+            />
+            {value && (
+              <button
+                type="button"
+                onClick={() => onChange('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 font-bold"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {value && (
+            <div className="flex items-center gap-3 bg-cf-cream/10 p-3 border border-cf-tan rounded-2xl">
+              <div
+                className={`relative overflow-hidden border border-cf-tan shadow-sm bg-white shrink-0 ${isRound ? 'rounded-full' : 'rounded-xl'}`}
+                style={{ width: previewDimensions.width, height: previewDimensions.height }}
+              >
+                <img
+                  src={value}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div style={{ display: 'none' }} className="w-full h-full bg-red-50 text-red-500 text-[10px] font-bold text-center items-center justify-center p-1">
+                  ⚠️ Invalid URL
+                </div>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-cf-dark">Image Link Preview</p>
+                <p className="text-[10px] text-cf-brown/60 truncate max-w-xs">{value}</p>
+                <button
+                  type="button"
+                  onClick={handleRemove}
+                  className="text-xs font-bold text-red-500 hover:underline mt-1 block"
+                >
+                  Clear Link
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {hint && !displayError && (
-        <p className="text-xs text-gray-400 px-1">{hint}</p>
+        <p className="text-[10px] text-cf-brown/60 px-1">{hint}</p>
       )}
 
       {displayError && (
         <p className="text-xs text-red-500 px-1 flex items-center gap-1">
-          <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
-          {displayError}
+          ⚠️ {displayError}
         </p>
       )}
     </div>

@@ -11,10 +11,10 @@ import { FormInput } from '@/components/shared/FormField';
 import { ROUTES } from '@/utils/constants';
 import Link from 'next/link';
 import ImageUploader from '@/components/shared/ImageUploader';
+import { toast } from 'react-hot-toast';
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
@@ -25,7 +25,6 @@ export default function RegisterForm() {
   const selectedRole = watch('role');
 
   const onSubmit = async (data) => {
-    setError('');
     setIsLoading(true);
     try {
       const response = await authClient.signUp.email({
@@ -38,14 +37,16 @@ export default function RegisterForm() {
       if (response.error) {
         throw new Error(response.error.message);
       }
-      if (response.data?.session?.token) {
-        localStorage.setItem('access-token', response.data.session.token);
-      } else if (response.data?.token) {
-        localStorage.setItem('access-token', response.data.token);
+      
+      const token = response.data?.session?.token || response.data?.token;
+      if (token) {
+        localStorage.setItem('access-token', token);
       }
+      
+      toast.success('Welcome! Your account has been created successfully.');
       router.push(ROUTES.DASHBOARD);
     } catch (err) {
-      setError(err.message || 'Registration failed.');
+      toast.error(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -57,21 +58,14 @@ export default function RegisterForm() {
         provider: 'google',
         callbackURL: ROUTES.DASHBOARD 
       });
-      // Token storage for Google login is typically handled via a callback page or session fetching, 
-      // as it redirects. We add a fetchOptions as fallback if it doesn't redirect.
     } catch (err) {
-      setError(err.message || 'Google login failed.');
+      toast.error(err.message || 'Google registration failed.');
     }
   };
 
+
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
-      {error && (
-        <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg text-red-700 text-sm font-medium shadow-sm">
-          {error}
-        </div>
-      )}
-
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <Controller
           name="name"
@@ -83,6 +77,10 @@ export default function RegisterForm() {
               placeholder="John Doe"
               errorMessage={errors.name?.message}
               isInvalid={!!errors.name}
+              classNames={{
+                label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
+                inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
+              }}
             />
           )}
         />
@@ -98,6 +96,10 @@ export default function RegisterForm() {
               placeholder="you@example.com"
               errorMessage={errors.email?.message}
               isInvalid={!!errors.email}
+              classNames={{
+                label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
+                inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
+              }}
             />
           )}
         />
@@ -110,7 +112,7 @@ export default function RegisterForm() {
               value={field.value || ''}
               onChange={field.onChange}
               label="Profile Picture (Optional)"
-              hint="Upload a photo for your profile — PNG, JPG or WebP, max 5 MB"
+              hint="Upload a photo or paste direct link — PNG, JPG, WebP, max 5 MB"
               isRound
               previewSize="md"
               error={errors.image?.message}
@@ -129,6 +131,10 @@ export default function RegisterForm() {
               placeholder="••••••••"
               errorMessage={errors.password?.message}
               isInvalid={!!errors.password}
+              classNames={{
+                label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
+                inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
+              }}
             />
           )}
         />
@@ -144,44 +150,61 @@ export default function RegisterForm() {
               placeholder="••••••••"
               errorMessage={errors.confirmPassword?.message}
               isInvalid={!!errors.confirmPassword}
+              classNames={{
+                label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
+                inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
+              }}
             />
           )}
         />
 
-        <div className="bg-cf-cream/50 p-4 rounded-xl border border-cf-tan">
-          <p className="text-sm font-semibold text-cf-dark mb-3">Join as a:</p>
-          <div className="flex gap-6">
+        <div className="space-y-2">
+          <label className="text-gray-700 font-bold text-xs uppercase tracking-wider block">Join as a:</label>
+          <div className="grid grid-cols-2 gap-4">
             <Controller
               name="role"
               control={control}
               render={({ field }) => (
                 <>
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${field.value === 'supporter' ? 'border-cf-dark bg-cf-dark' : 'border-cf-brown group-hover:border-cf-dark'}`}>
-                      {field.value === 'supporter' && <div className="w-2 h-2 rounded-full bg-white" />}
+                  {/* Supporter Option */}
+                  <div
+                    onClick={() => field.onChange('supporter')}
+                    className={`p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex flex-col justify-between h-28 relative ${
+                      field.value === 'supporter'
+                        ? 'border-cf-dark bg-cf-cream/10 shadow-md scale-[1.02]'
+                        : 'border-gray-200/80 hover:border-gray-300 bg-white hover:shadow-sm'
+                    }`}
+                  >
+                    <div>
+                      <p className="font-extrabold text-sm text-gray-800">Supporter</p>
+                      <p className="text-[10px] text-gray-400 mt-1 leading-relaxed">
+                        Back campaigns, earn rewards, and make an impact.
+                      </p>
                     </div>
-                    <input
-                      type="radio"
-                      value="supporter"
-                      checked={field.value === 'supporter'}
-                      onChange={() => field.onChange('supporter')}
-                      className="hidden"
-                    />
-                    <span className={`text-sm font-medium ${field.value === 'supporter' ? 'text-cf-dark' : 'text-cf-brown group-hover:text-cf-dark'}`}>Supporter</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer group">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${field.value === 'creator' ? 'border-cf-dark bg-cf-dark' : 'border-cf-brown group-hover:border-cf-dark'}`}>
-                      {field.value === 'creator' && <div className="w-2 h-2 rounded-full bg-white" />}
+                    {field.value === 'supporter' && (
+                      <span className="absolute bottom-2.5 right-2.5 flex items-center justify-center w-5 h-5 text-[10px] bg-cf-dark text-white rounded-full font-bold">✓</span>
+                    )}
+                  </div>
+
+                  {/* Creator Option */}
+                  <div
+                    onClick={() => field.onChange('creator')}
+                    className={`p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 flex flex-col justify-between h-28 relative ${
+                      field.value === 'creator'
+                        ? 'border-cf-dark bg-cf-cream/10 shadow-md scale-[1.02]'
+                        : 'border-gray-200/80 hover:border-gray-300 bg-white hover:shadow-sm'
+                    }`}
+                  >
+                    <div>
+                      <p className="font-extrabold text-sm text-gray-800">Creator</p>
+                      <p className="text-[10px] text-gray-400 mt-1 leading-relaxed">
+                        Launch campaigns, raise funds, and build a community.
+                      </p>
                     </div>
-                    <input
-                      type="radio"
-                      value="creator"
-                      checked={field.value === 'creator'}
-                      onChange={() => field.onChange('creator')}
-                      className="hidden"
-                    />
-                    <span className={`text-sm font-medium ${field.value === 'creator' ? 'text-cf-dark' : 'text-cf-brown group-hover:text-cf-dark'}`}>Creator</span>
-                  </label>
+                    {field.value === 'creator' && (
+                      <span className="absolute bottom-2.5 right-2.5 flex items-center justify-center w-5 h-5 text-[10px] bg-cf-dark text-white rounded-full font-bold">✓</span>
+                    )}
+                  </div>
                 </>
               )}
             />
@@ -190,7 +213,7 @@ export default function RegisterForm() {
 
         <Button 
           type="submit" 
-          className="w-full bg-cf-dark hover:bg-[#3A2A2A] text-cf-cream font-semibold py-6 text-md shadow-md hover:shadow-lg transition-all" 
+          className="w-full bg-cf-dark hover:bg-black text-cf-cream font-bold py-6 text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none active:scale-[0.99]" 
           isLoading={isLoading}
         >
           Create Account
@@ -199,19 +222,19 @@ export default function RegisterForm() {
 
       <div className="relative pt-2">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-cf-tan" />
+          <div className="w-full border-t border-gray-200/60" />
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-white text-cf-brown font-medium">Or continue with</span>
+        <div className="relative flex justify-center text-xs">
+          <span className="px-3 bg-white text-gray-500 font-bold uppercase tracking-widest text-[10px]">Or register with</span>
         </div>
       </div>
 
       <Button 
         variant="bordered" 
-        className="w-full border-2 border-cf-tan text-cf-dark font-medium py-6 hover:border-cf-brown hover:bg-cf-cream/30 transition-all" 
+        className="w-full border border-gray-300 text-gray-700 font-bold py-6 hover:border-cf-dark hover:bg-cf-cream/10 rounded-xl transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.99]" 
         onPress={handleGoogleLogin}
       >
-        <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+        <svg className="w-4 h-4 mr-2.5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -220,9 +243,9 @@ export default function RegisterForm() {
         Google
       </Button>
 
-      <p className="text-center text-sm text-cf-brown font-medium">
+      <p className="text-center text-xs text-gray-500 font-semibold">
         Already have an account?{' '}
-        <Link href={ROUTES.LOGIN} className="text-cf-dark hover:text-[#3A2A2A] hover:underline font-bold transition-colors">
+        <Link href={ROUTES.LOGIN} className="text-cf-dark hover:text-black hover:underline font-extrabold transition-colors">
           Sign in
         </Link>
       </p>

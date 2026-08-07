@@ -209,7 +209,7 @@ export default function NotificationBell() {
               <div style={{ padding: '48px 24px', textAlign: 'center' }}>
                 <div style={{ fontSize: 36, marginBottom: 10 }}>🔔</div>
                 <p style={{ fontSize: 14, fontWeight: 600, color: '#888', margin: 0 }}>
-                  You're all caught up!
+                  You&apos;re all caught up!
                 </p>
                 <p style={{ fontSize: 12, color: '#bbb', margin: '4px 0 0' }}>
                   No notifications yet.

@@ -106,6 +106,7 @@ function CampaignApprovalsTable() {
   };
 
   const handleRejectConfirm = (reason) => {
+    if (!rejectTarget) return;
     rejectMutation.mutate({ id: rejectTarget._id, reason }, {
       onSettled: () => setRejectTarget(null),
     });

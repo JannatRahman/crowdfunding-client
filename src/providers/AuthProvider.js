@@ -40,23 +40,8 @@ class AuthErrorBoundary extends Component {
 }
 
 function AuthProviderInner({ children }) {
-  let sessionData = { data: null, isPending: true };
-  try {
-    sessionData = useSession();
-  } catch (e) {
-    console.warn('useSession failed:', e?.message);
-  }
-
-  const { data: session, isPending } = sessionData;
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    if (session?.user) {
-      setUser(session.user);
-    } else if (!isPending) {
-      setUser(null);
-    }
-  }, [session, isPending]);
+  const { data: session, isPending } = useSession() || { data: null, isPending: false };
+  const user = session?.user || null;
 
   const value = {
     user,

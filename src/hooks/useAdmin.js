@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { toast } from 'react-hot-toast';
 
 export function useAdminStats() {
   return useQuery({
@@ -30,9 +31,13 @@ export function useChangeUserRole() {
       const { data } = await api.patch(`/api/admin/users/${id}/role`, { role });
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+      toast.success(data?.message || 'User role updated successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to update user role.');
+    }
   });
 }
 
@@ -43,9 +48,13 @@ export function useDeleteUser() {
       const { data } = await api.delete(`/api/admin/users/${id}`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
+      toast.success(data?.message || 'User removed successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to remove user.');
+    }
   });
 }
 
@@ -56,10 +65,14 @@ export function useFeatureCampaign() {
       const { data } = await api.patch(`/api/admin/campaigns/${id}/feature`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminStats'] });
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success('Campaign featured status updated!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to update campaign featured status.');
+    }
   });
 }
 
@@ -82,7 +95,11 @@ export function useUpdateReport() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminReports'] });
+      toast.success('Report updated successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to update report.');
+    }
   });
 }
 
@@ -92,6 +109,12 @@ export function useSubmitReport() {
       const { data } = await api.post('/api/reports', reportData);
       return data;
     },
+    onSuccess: () => {
+      toast.success('Campaign reported successfully.');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to submit report.');
+    }
   });
 }
 
@@ -114,11 +137,15 @@ export function useApproveCampaign() {
       const { data } = await api.patch(`/api/admin/campaigns/${id}/approve`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
       queryClient.invalidateQueries({ queryKey: ['adminStats'] });
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success(data?.message || 'Campaign approved successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to approve campaign.');
+    }
   });
 }
 
@@ -129,10 +156,14 @@ export function useRejectCampaign() {
       const { data } = await api.patch(`/api/admin/campaigns/${id}/reject`, { reason });
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
       queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      toast.success(data?.message || 'Campaign rejected and creator notified!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to reject campaign.');
+    }
   });
 }
 
@@ -155,12 +186,16 @@ export function useAdminDeleteCampaign() {
       const { data } = await api.delete(`/api/admin/campaigns/${id}`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminAllCampaigns'] });
       queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
       queryClient.invalidateQueries({ queryKey: ['adminStats'] });
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success(data?.message || 'Campaign deleted successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to delete campaign.');
+    }
   });
 }
 
@@ -171,10 +206,14 @@ export function useSuspendCampaign() {
       const { data } = await api.patch(`/api/admin/campaigns/${id}/suspend`);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['adminAllCampaigns'] });
       queryClient.invalidateQueries({ queryKey: ['adminReports'] });
       queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+      toast.success(data?.message || 'Campaign suspended successfully!');
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.error || 'Failed to suspend campaign.');
+    }
   });
 }
