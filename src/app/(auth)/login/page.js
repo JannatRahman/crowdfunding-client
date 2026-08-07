@@ -7,10 +7,10 @@ export default function LoginPage() {
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-500 mt-2">Sign in to your account</p>
+          <h1 className="text-4xl font-bold text-cf-dark tracking-tight">Welcome Back</h1>
+          <p className="text-cf-brown font-medium mt-2">Sign in to your account</p>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        <div className="bg-white rounded-3xl shadow-xl border border-cf-tan p-8">
           <LoginForm />
         </div>
       </div>
