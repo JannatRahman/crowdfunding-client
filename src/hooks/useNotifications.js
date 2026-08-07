@@ -10,6 +10,7 @@ export function useNotifications(params = {}) {
       const { data } = await api.get('/api/notifications', { params });
       return data;
     },
+    refetchInterval: 30000, // poll every 30 s for near-real-time updates
   });
 }
 

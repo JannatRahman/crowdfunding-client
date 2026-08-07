@@ -135,3 +135,46 @@ export function useRejectCampaign() {
     },
   });
 }
+
+// ─── Admin Campaign Management Hooks ─────────────────────────────────────────
+
+export function useAdminAllCampaigns(params = {}) {
+  return useQuery({
+    queryKey: ['adminAllCampaigns', params],
+    queryFn: async () => {
+      const { data } = await api.get('/api/admin/all-campaigns', { params });
+      return data;
+    },
+  });
+}
+
+export function useAdminDeleteCampaign() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.delete(`/api/admin/campaigns/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminAllCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    },
+  });
+}
+
+export function useSuspendCampaign() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.patch(`/api/admin/campaigns/${id}/suspend`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminAllCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['adminReports'] });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    },
+  });
+}
