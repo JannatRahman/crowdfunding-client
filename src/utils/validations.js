@@ -31,6 +31,7 @@ export const campaignSchema = z.object({
   images: z.array(z.string()).optional(),
   video: z.string().optional(),
   tags: z.array(z.string()).optional(),
+  rewardInfo: z.string().optional(),
 });
 
 export const contributionSchema = z.object({
@@ -47,6 +48,12 @@ export const withdrawalSchema = z.object({
     accountNumber: z.string().min(1, 'Account number is required'),
     bankName: z.string().min(1, 'Bank name is required'),
   }),
+});
+
+export const creatorWithdrawalSchema = z.object({
+  withdrawal_credit: z.number().min(200, 'Minimum withdrawal is 200 credits ($10)'),
+  payment_system: z.string().min(1, 'Payment system is required'),
+  account_number: z.string().min(1, 'Account number is required'),
 });
 
 export const reportSchema = z.object({

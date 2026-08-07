@@ -20,6 +20,7 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
       category: '',
       goalAmount: '',
       endDate: '',
+      rewardInfo: '',
       tags: [],
     },
   });
@@ -68,6 +69,22 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
             minRows={6}
             errorMessage={errors.description?.message}
             isInvalid={!!errors.description}
+          />
+        )}
+      />
+
+      <Controller
+        name="rewardInfo"
+        control={control}
+        render={({ field }) => (
+          <TextArea
+            {...field}
+            onValueChange={field.onChange}
+            label="Reward Info"
+            placeholder="What rewards do supporters get? (e.g. T-shirt, thank-you note, etc.)"
+            minRows={3}
+            errorMessage={errors.rewardInfo?.message}
+            isInvalid={!!errors.rewardInfo}
           />
         )}
       />

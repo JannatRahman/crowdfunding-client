@@ -37,6 +37,7 @@ export default function EditCampaignPage() {
               category: campaign.category,
               goalAmount: campaign.goalAmount,
               endDate: campaign.endDate?.split('T')[0] || '',
+              rewardInfo: campaign.rewardInfo || campaign.reward_info || '',
             }}
             onSubmit={handleSubmit}
             isLoading={updateCampaign.isPending}

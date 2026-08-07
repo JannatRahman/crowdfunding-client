@@ -5,26 +5,28 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { ROUTES } from '@/utils/constants';
 
-const supporterLinks = [
-  { href: ROUTES.SUPPORTER_DASHBOARD, label: 'Overview', icon: '📊' },
+export const supporterLinks = [
+  { href: ROUTES.SUPPORTER_DASHBOARD, label: 'Home', icon: '🏠' },
+  { href: ROUTES.CAMPAIGNS, label: 'Explore Campaigns', icon: '🔍' },
   { href: ROUTES.SUPPORTER_CONTRIBUTIONS, label: 'My Contributions', icon: '💝' },
-  { href: ROUTES.SUPPORTER_SAVED, label: 'Saved', icon: '🔖' },
+  { href: ROUTES.SUPPORTER_PURCHASE_CREDIT, label: 'Purchase Credit', icon: '💳' },
+  { href: ROUTES.SUPPORTER_PAYMENT_HISTORY, label: 'Payment History', icon: '📜' },
 ];
 
-const creatorLinks = [
-  { href: ROUTES.CREATOR_DASHBOARD, label: 'Overview', icon: '📊' },
+export const creatorLinks = [
+  { href: ROUTES.CREATOR_DASHBOARD, label: 'Home', icon: '🏠' },
+  { href: ROUTES.CREATOR_NEW_CAMPAIGN, label: 'Add New Campaign', icon: '➕' },
   { href: ROUTES.CREATOR_CAMPAIGNS, label: 'My Campaigns', icon: '📋' },
-  { href: ROUTES.CREATOR_NEW_CAMPAIGN, label: 'New Campaign', icon: '➕' },
   { href: ROUTES.CREATOR_WITHDRAWALS, label: 'Withdrawals', icon: '💰' },
+  { href: ROUTES.CREATOR_PAYMENT_HISTORY, label: 'Payment History', icon: '📜' },
 ];
 
-const adminLinks = [
-  { href: ROUTES.ADMIN_DASHBOARD, label: 'Overview', icon: '📊' },
-  { href: ROUTES.ADMIN_USERS, label: 'Users', icon: '👥' },
-  { href: ROUTES.ADMIN_CAMPAIGNS, label: 'Campaigns', icon: '📋' },
-  { href: ROUTES.ADMIN_WITHDRAWALS, label: 'Withdrawals', icon: '💰' },
+export const adminLinks = [
+  { href: ROUTES.ADMIN_DASHBOARD, label: 'Home', icon: '🏠' },
+  { href: ROUTES.ADMIN_USERS, label: 'Manage Users', icon: '👥' },
+  { href: ROUTES.ADMIN_CAMPAIGNS, label: 'Manage Campaigns', icon: '📋' },
+  { href: ROUTES.ADMIN_WITHDRAWALS, label: 'Withdrawal Requests', icon: '💰' },
   { href: ROUTES.ADMIN_REPORTS, label: 'Reports', icon: '⚠️' },
-  { href: ROUTES.ADMIN_NOTIFICATIONS, label: 'Notifications', icon: '🔔' },
 ];
 
 export default function Sidebar() {
@@ -34,26 +36,27 @@ export default function Sidebar() {
   const links = role === 'admin' ? adminLinks : role === 'creator' ? creatorLinks : supporterLinks;
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 min-h-screen p-4 hidden lg:block">
-      <div className="mb-6 px-3">
-        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">
+    <aside className="w-64 bg-cf-cream border-r border-cf-tan min-h-[calc(100vh-64px)] p-6 hidden lg:block shadow-sm">
+      <div className="mb-8 px-3">
+        <p className="text-xs text-cf-brown uppercase tracking-wider font-bold">
           {role} Dashboard
         </p>
       </div>
-      <nav className="space-y-1">
+      <nav className="space-y-2">
         {links.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive = pathname === link.href || (link.href !== ROUTES.HOME && pathname.startsWith(link.href) && link.href !== ROUTES.DASHBOARD && !['/dashboard/supporter', '/dashboard/creator', '/dashboard/admin'].includes(link.href) && pathname !== link.href);
+          
           return (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-blue-50 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                pathname === link.href
+                  ? 'bg-cf-dark text-cf-cream shadow-md'
+                  : 'text-cf-brown hover:bg-white/60 hover:text-cf-dark'
               }`}
             >
-              <span className="text-lg">{link.icon}</span>
+              <span className="text-xl">{link.icon}</span>
               {link.label}
             </Link>
           );

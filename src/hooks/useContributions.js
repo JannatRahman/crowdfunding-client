@@ -36,3 +36,43 @@ export function useCreateContribution() {
     },
   });
 }
+
+export function usePendingContributions() {
+  return useQuery({
+    queryKey: ['pendingContributions'],
+    queryFn: async () => {
+      const { data } = await api.get('/api/contributions/pending');
+      return data;
+    },
+  });
+}
+
+export function useApproveContribution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.patch(`/api/contributions/${id}/approve`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingContributions'] });
+      queryClient.invalidateQueries({ queryKey: ['myCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    },
+  });
+}
+
+export function useRejectContribution() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.patch(`/api/contributions/${id}/reject`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingContributions'] });
+      queryClient.invalidateQueries({ queryKey: ['myCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    },
+  });
+}
