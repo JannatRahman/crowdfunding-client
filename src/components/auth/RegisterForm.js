@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { Button, Input } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
 import Link from 'next/link';
+import ImageUploader from '@/components/shared/ImageUploader';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -116,19 +117,14 @@ export default function RegisterForm() {
           name="image"
           control={control}
           render={({ field }) => (
-            <Input
-              {...field}
-              onValueChange={field.onChange}
-              type="url"
-              label="Profile Picture URL (Optional)"
-              placeholder="https://example.com/avatar.jpg"
-              errorMessage={errors.image?.message}
-              isInvalid={!!errors.image}
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark",
-                label: "text-cf-dark font-medium",
-              }}
+            <ImageUploader
+              value={field.value || ''}
+              onChange={field.onChange}
+              label="Profile Picture (Optional)"
+              hint="Upload a photo for your profile — PNG, JPG or WebP, max 5 MB"
+              isRound
+              previewSize="md"
+              error={errors.image?.message}
             />
           )}
         />

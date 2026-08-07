@@ -3,9 +3,7 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { useMyContributions } from '@/hooks/useContributions';
 import { formatCurrency, formatDate } from '@/utils/formatters';
-import DashboardStats from '@/components/dashboard/DashboardStats';
 import EmptyState from '@/components/shared/EmptyState';
-import Pagination from '@/components/shared/Pagination';
 import { Card, CardContent, Chip } from '@heroui/react';
 import Link from 'next/link';
 import { ROUTES } from '@/utils/constants';

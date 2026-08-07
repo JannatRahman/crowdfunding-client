@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { campaignSchema } from '@/utils/validations';
 import { CAMPAIGN_CATEGORIES } from '@/utils/constants';
 import { Button, Input, TextArea } from '@heroui/react';
+import ImageUploader from '@/components/shared/ImageUploader';
 
 export default function CampaignForm({ initialData, onSubmit, isLoading, submitText = 'Save Campaign' }) {
   const {
@@ -22,6 +23,7 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
       endDate: '',
       rewardInfo: '',
       tags: [],
+      images: [],
     },
   });
 
@@ -38,6 +40,23 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
             placeholder="My Amazing Campaign"
             errorMessage={errors.title?.message}
             isInvalid={!!errors.title}
+          />
+        )}
+      />
+
+      {/* Campaign Cover Image */}
+      <Controller
+        name="images"
+        control={control}
+        render={({ field }) => (
+          <ImageUploader
+            value={Array.isArray(field.value) ? field.value[0] || '' : field.value || ''}
+            onChange={(url) => field.onChange(url ? [url] : [])}
+            label="Campaign Cover Image"
+            hint="A great cover image helps your campaign stand out. Recommended: 1280×720 px (16:9)."
+            previewSize="lg"
+            maxSizeMB={8}
+            error={errors.images?.message}
           />
         )}
       />
