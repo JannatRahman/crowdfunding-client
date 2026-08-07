@@ -190,7 +190,8 @@ export default function AdminCampaigns() {
                   </tr>
                 </thead>
                 <tbody>
-                  {campaigns.map((c, idx) => {
+                  {/* C7: Filter out any campaign docs with a missing _id before mapping */}
+                  {campaigns.filter(c => c._id).map((c, idx) => {
                     const pct = getProgressPercent(c.currentAmount, c.goalAmount);
                     return (
                       <tr key={c._id} style={{ borderBottom: '1px solid #ede9e2', transition: 'background 0.15s' }}

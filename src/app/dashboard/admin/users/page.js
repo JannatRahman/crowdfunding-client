@@ -281,7 +281,8 @@ export default function AdminUsers() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((u, idx) => (
+                  {/* C6: Filter out any user docs with a missing _id before mapping */}
+                  {users.filter(u => u._id).map((u, idx) => (
                     <tr
                       key={u._id}
                       style={{ borderBottom: '1px solid #ede9e2', transition: 'background 0.15s' }}

@@ -1,14 +1,21 @@
 export function formatCurrency(amount, currency = 'USD') {
+  // C8: Return a safe fallback for null / undefined / NaN inputs
+  const num = Number(amount);
+  if (amount == null || !Number.isFinite(num)) return '$0';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(num);
 }
 
 export function formatDate(date) {
-  return new Date(date).toLocaleDateString('en-US', {
+  // C8: Return an empty string for null / undefined / unparseable dates
+  if (date == null) return '';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -37,10 +44,17 @@ export function getProgressPercent(current, goal) {
 }
 
 export function getDaysLeft(endDate) {
-  const end = new Date(endDate);
-  const now = new Date();
-  const diff = end - now;
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  // C9: Guard against invalid dates crashing the UI
+  try {
+    if (endDate == null) return 0;
+    const end = new Date(endDate);
+    if (isNaN(end.getTime())) return 0;
+    const now = new Date();
+    const diff = end - now;
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  } catch {
+    return 0;
+  }
 }
 
 export function truncate(str, length = 100) {
