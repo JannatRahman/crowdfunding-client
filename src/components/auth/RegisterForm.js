@@ -26,12 +26,21 @@ export default function RegisterForm() {
     setError('');
     setIsLoading(true);
     try {
-      await authClient.signUp.email({
+      const response = await authClient.signUp.email({
         name: data.name,
         email: data.email,
         password: data.password,
+        image: data.image,
         role: data.role,
       });
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+      if (response.data?.session?.token) {
+        localStorage.setItem('access-token', response.data.session.token);
+      } else if (response.data?.token) {
+        localStorage.setItem('access-token', response.data.token);
+      }
       router.push(ROUTES.DASHBOARD);
     } catch (err) {
       setError(err.message || 'Registration failed.');
@@ -42,7 +51,12 @@ export default function RegisterForm() {
 
   const handleGoogleLogin = async () => {
     try {
-      await authClient.signIn.social({ provider: 'google' });
+      await authClient.signIn.social({ 
+        provider: 'google',
+        callbackURL: ROUTES.DASHBOARD 
+      });
+      // Token storage for Google login is typically handled via a callback page or session fetching, 
+      // as it redirects. We add a fetchOptions as fallback if it doesn't redirect.
     } catch (err) {
       setError(err.message || 'Google login failed.');
     }
@@ -84,6 +98,22 @@ export default function RegisterForm() {
               placeholder="you@example.com"
               errorMessage={errors.email?.message}
               isInvalid={!!errors.email}
+            />
+          )}
+        />
+
+        <Controller
+          name="image"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="url"
+              label="Profile Picture URL (Optional)"
+              placeholder="https://example.com/avatar.jpg"
+              errorMessage={errors.image?.message}
+              isInvalid={!!errors.image}
             />
           )}
         />

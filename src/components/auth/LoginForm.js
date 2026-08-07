@@ -23,10 +23,18 @@ export default function LoginForm() {
     setError('');
     setIsLoading(true);
     try {
-      await authClient.signIn.email({
+      const response = await authClient.signIn.email({
         email: data.email,
         password: data.password,
       });
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+      if (response.data?.session?.token) {
+        localStorage.setItem('access-token', response.data.session.token);
+      } else if (response.data?.token) {
+        localStorage.setItem('access-token', response.data.token);
+      }
       router.push(ROUTES.DASHBOARD);
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
@@ -37,7 +45,10 @@ export default function LoginForm() {
 
   const handleGoogleLogin = async () => {
     try {
-      await authClient.signIn.social({ provider: 'google' });
+      await authClient.signIn.social({ 
+        provider: 'google',
+        callbackURL: ROUTES.DASHBOARD
+      });
     } catch (err) {
       setError(err.message || 'Google login failed.');
     }
