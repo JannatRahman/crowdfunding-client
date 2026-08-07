@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '@/utils/validations';
 import { authClient } from '@/lib/auth-client';
@@ -15,7 +15,7 @@ export default function RegisterForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: { role: 'supporter' },
   });
@@ -57,62 +57,100 @@ export default function RegisterForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          {...register('name')}
-          label="Full Name"
-          placeholder="John Doe"
-          errorMessage={errors.name?.message}
-          isInvalid={!!errors.name}
+        <Controller
+          name="name"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              label="Full Name"
+              placeholder="John Doe"
+              errorMessage={errors.name?.message}
+              isInvalid={!!errors.name}
+            />
+          )}
         />
 
-        <Input
-          {...register('email')}
-          type="email"
-          label="Email"
-          placeholder="you@example.com"
-          errorMessage={errors.email?.message}
-          isInvalid={!!errors.email}
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="email"
+              label="Email"
+              placeholder="you@example.com"
+              errorMessage={errors.email?.message}
+              isInvalid={!!errors.email}
+            />
+          )}
         />
 
-        <Input
-          {...register('password')}
-          type="password"
-          label="Password"
-          placeholder="At least 6 characters"
-          errorMessage={errors.password?.message}
-          isInvalid={!!errors.password}
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="password"
+              label="Password"
+              placeholder="At least 6 characters"
+              errorMessage={errors.password?.message}
+              isInvalid={!!errors.password}
+            />
+          )}
         />
 
-        <Input
-          {...register('confirmPassword')}
-          type="password"
-          label="Confirm Password"
-          placeholder="Repeat your password"
-          errorMessage={errors.confirmPassword?.message}
-          isInvalid={!!errors.confirmPassword}
+        <Controller
+          name="confirmPassword"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="password"
+              label="Confirm Password"
+              placeholder="Repeat your password"
+              errorMessage={errors.confirmPassword?.message}
+              isInvalid={!!errors.confirmPassword}
+            />
+          )}
         />
 
         <div>
           <p className="text-sm font-medium text-gray-700 mb-2">I want to</p>
           <div className="flex gap-4">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                value="supporter"
-                {...register('role')}
-                className="w-4 h-4 text-blue-600"
-              />
-              <span className="text-sm text-gray-700">Support campaigns</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                value="creator"
-                {...register('role')}
-                className="w-4 h-4 text-blue-600"
-              />
-              <span className="text-sm text-gray-700">Create campaigns</span>
-            </label>
+            <Controller
+              name="role"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="supporter"
+                      checked={field.value === 'supporter'}
+                      onChange={() => field.onChange('supporter')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="text-sm text-gray-700">Support campaigns</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      value="creator"
+                      checked={field.value === 'creator'}
+                      onChange={() => field.onChange('creator')}
+                      className="w-4 h-4 text-blue-600"
+                    />
+                    <span className="text-sm text-gray-700">Create campaigns</span>
+                  </label>
+                </>
+              )}
+            />
           </div>
         </div>
 

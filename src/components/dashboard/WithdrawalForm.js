@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { withdrawalSchema } from '@/utils/validations';
 import { useCreateWithdrawal } from '@/hooks/useWithdrawals';
@@ -10,9 +10,11 @@ import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } fr
 export default function WithdrawalForm({ campaigns, isOpen, onClose }) {
   const createWithdrawal = useCreateWithdrawal();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(withdrawalSchema),
     defaultValues: {
+      campaignId: '',
+      amount: '',
       bankDetails: { accountHolder: '', accountNumber: '', bankName: '' },
     },
   });
@@ -31,47 +33,81 @@ export default function WithdrawalForm({ campaigns, isOpen, onClose }) {
       <form onSubmit={handleSubmit(onSubmit)}>
         <SimpleModalHeader>Request Withdrawal</SimpleModalHeader>
         <SimpleModalBody className="space-y-4">
-          <select
-            {...register('campaignId')}
-            className="w-full p-2.5 border border-gray-300 rounded-lg text-sm"
-          >
-            <option value="">Select Campaign</option>
-            {campaigns?.map((c) => (
-              <option key={c._id} value={c._id}>
-                {c.title} (Balance: ${c.currentAmount})
-              </option>
-            ))}
-          </select>
+          <Controller
+            name="campaignId"
+            control={control}
+            render={({ field }) => (
+              <select
+                {...field}
+                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm"
+              >
+                <option value="">Select Campaign</option>
+                {campaigns?.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.title} (Balance: ${c.currentAmount})
+                  </option>
+                ))}
+              </select>
+            )}
+          />
           {errors.campaignId && <p className="text-red-500 text-xs">{errors.campaignId.message}</p>}
 
-          <Input
-            {...register('amount', { valueAsNumber: true })}
-            type="number"
-            label="Amount ($)"
-            placeholder="500"
-            errorMessage={errors.amount?.message}
-            isInvalid={!!errors.amount}
+          <Controller
+            name="amount"
+            control={control}
+            render={({ field }) => (
+              <Input
+                value={field.value}
+                onValueChange={(v) => field.onChange(parseFloat(v) || 0)}
+                type="number"
+                label="Amount ($)"
+                placeholder="500"
+                errorMessage={errors.amount?.message}
+                isInvalid={!!errors.amount}
+              />
+            )}
           />
 
-          <Input
-            {...register('bankDetails.accountHolder')}
-            label="Account Holder Name"
-            errorMessage={errors.bankDetails?.accountHolder?.message}
-            isInvalid={!!errors.bankDetails?.accountHolder}
+          <Controller
+            name="bankDetails.accountHolder"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                onValueChange={field.onChange}
+                label="Account Holder Name"
+                errorMessage={errors.bankDetails?.accountHolder?.message}
+                isInvalid={!!errors.bankDetails?.accountHolder}
+              />
+            )}
           />
 
-          <Input
-            {...register('bankDetails.accountNumber')}
-            label="Account Number"
-            errorMessage={errors.bankDetails?.accountNumber?.message}
-            isInvalid={!!errors.bankDetails?.accountNumber}
+          <Controller
+            name="bankDetails.accountNumber"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                onValueChange={field.onChange}
+                label="Account Number"
+                errorMessage={errors.bankDetails?.accountNumber?.message}
+                isInvalid={!!errors.bankDetails?.accountNumber}
+              />
+            )}
           />
 
-          <Input
-            {...register('bankDetails.bankName')}
-            label="Bank Name"
-            errorMessage={errors.bankDetails?.bankName?.message}
-            isInvalid={!!errors.bankDetails?.bankName}
+          <Controller
+            name="bankDetails.bankName"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                onValueChange={field.onChange}
+                label="Bank Name"
+                errorMessage={errors.bankDetails?.bankName?.message}
+                isInvalid={!!errors.bankDetails?.bankName}
+              />
+            )}
           />
         </SimpleModalBody>
         <SimpleModalFooter>

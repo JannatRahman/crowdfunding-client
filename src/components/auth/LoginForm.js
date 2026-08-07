@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/utils/validations';
 import { authClient } from '@/lib/auth-client';
@@ -15,7 +15,7 @@ export default function LoginForm() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
@@ -52,22 +52,36 @@ export default function LoginForm() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Input
-          {...register('email')}
-          type="email"
-          label="Email"
-          placeholder="you@example.com"
-          errorMessage={errors.email?.message}
-          isInvalid={!!errors.email}
+        <Controller
+          name="email"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="email"
+              label="Email"
+              placeholder="you@example.com"
+              errorMessage={errors.email?.message}
+              isInvalid={!!errors.email}
+            />
+          )}
         />
 
-        <Input
-          {...register('password')}
-          type="password"
-          label="Password"
-          placeholder="Enter your password"
-          errorMessage={errors.password?.message}
-          isInvalid={!!errors.password}
+        <Controller
+          name="password"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              onValueChange={field.onChange}
+              type="password"
+              label="Password"
+              placeholder="Enter your password"
+              errorMessage={errors.password?.message}
+              isInvalid={!!errors.password}
+            />
+          )}
         />
 
         <Button type="submit" color="primary" className="w-full" isLoading={isLoading}>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 
-import { stripe } from '../../../lib/stripe'
+import { getServerStripe } from '../../../lib/stripe'
 
 export async function POST() {
   try {
@@ -9,10 +9,11 @@ export async function POST() {
     const origin = headersList.get('origin')
 
     
+    const stripe = getServerStripe();
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
-          price: '{{PRICE_ID}}',
+          price: 'price_1U1nRbETnwl3wrOb76Rban4V',
           quantity: 1,
         },
       ],

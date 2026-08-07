@@ -8,7 +8,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
     <SimpleModal isOpen={isOpen} onClose={onClose} size="sm">
       <SimpleModalHeader>{title}</SimpleModalHeader>
       <SimpleModalBody>
-        <p className="text-gray-600">{message}</p>
+        <div className="text-gray-600">{message}</div>
       </SimpleModalBody>
       <SimpleModalFooter>
         <Button variant="light" onPress={onClose}>Cancel</Button>

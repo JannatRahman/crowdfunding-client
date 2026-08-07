@@ -1,6 +1,5 @@
 'use client';
 
-import { useAdminStats } from '@/hooks/useAdmin';
 import { formatCurrency } from '@/utils/formatters';
 import { Card, CardContent } from '@heroui/react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';

@@ -1,12 +1,53 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, Component } from 'react';
 import { useSession } from '@/lib/auth-client';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const { data: session, isPending } = useSession();
+function AuthErrorFallback({ children }) {
+  return (
+    <AuthContext.Provider value={{ user: null, session: null, isLoading: false, isAuthenticated: false, role: null }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+class AuthErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    console.warn('AuthProvider crashed, rendering without auth:', error?.message);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <AuthContext.Provider value={{ user: null, session: null, isLoading: false, isAuthenticated: false, role: null }}>
+          {this.props.children}
+        </AuthContext.Provider>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function AuthProviderInner({ children }) {
+  let sessionData = { data: null, isPending: true };
+  try {
+    sessionData = useSession();
+  } catch (e) {
+    console.warn('useSession failed:', e?.message);
+  }
+
+  const { data: session, isPending } = sessionData;
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -32,10 +73,20 @@ export function AuthProvider({ children }) {
   );
 }
 
+export function AuthProvider({ children }) {
+  return (
+    <AuthErrorBoundary>
+      <AuthProviderInner>
+        {children}
+      </AuthProviderInner>
+    </AuthErrorBoundary>
+  );
+}
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    return { user: null, session: null, isLoading: false, isAuthenticated: false, role: null };
   }
   return context;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { reportSchema } from '@/utils/validations';
 import { useSubmitReport } from '@/hooks/useAdmin';
@@ -11,7 +11,7 @@ import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } fr
 export default function ReportForm({ targetType, targetId, isOpen, onClose }) {
   const submitReport = useSubmitReport();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(reportSchema),
     defaultValues: { targetType, targetId, reason: '', description: '' },
   });
@@ -32,23 +32,37 @@ export default function ReportForm({ targetType, targetId, isOpen, onClose }) {
         <SimpleModalBody className="space-y-4">
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">Reason</label>
-            <select
-              {...register('reason')}
-              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select a reason</option>
-              {REPORT_REASONS.map((r) => (
-                <option key={r.value} value={r.value}>{r.label}</option>
-              ))}
-            </select>
+            <Controller
+              name="reason"
+              control={control}
+              render={({ field }) => (
+                <select
+                  {...field}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select a reason</option>
+                  {REPORT_REASONS.map((r) => (
+                    <option key={r.value} value={r.value}>{r.label}</option>
+                  ))}
+                </select>
+              )}
+            />
             {errors.reason && <p className="text-red-500 text-xs mt-1">{errors.reason.message}</p>}
           </div>
 
-          <TextArea
-            {...register('description')}
-            label="Description (optional)"
-            placeholder="Provide more details about your report"
-            minRows={3}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <TextArea
+                {...field}
+                onValueChange={field.onChange}
+                label="Description (optional)"
+                placeholder="Provide more details about your report"
+                minRows={3}
+              />
+            )}
           />
         </SimpleModalBody>
         <SimpleModalFooter>
