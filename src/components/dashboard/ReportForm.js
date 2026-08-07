@@ -4,7 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { reportSchema } from '@/utils/validations';
 import { useSubmitReport } from '@/hooks/useAdmin';
-import { Button, TextArea } from '@heroui/react';
+import { Button } from '@heroui/react';
+import { FormTextarea } from '@/components/shared/FormField';
 import { REPORT_REASONS } from '@/utils/constants';
 import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
 
@@ -55,9 +56,8 @@ export default function ReportForm({ targetType, targetId, isOpen, onClose }) {
             name="description"
             control={control}
             render={({ field }) => (
-              <TextArea
+              <FormTextarea
                 {...field}
-                onValueChange={field.onChange}
                 label="Description (optional)"
                 placeholder="Provide more details about your report"
                 minRows={3}

@@ -4,7 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { campaignSchema } from '@/utils/validations';
 import { CAMPAIGN_CATEGORIES } from '@/utils/constants';
-import { Button, Input, TextArea } from '@heroui/react';
+import { Button } from '@heroui/react';
+import { FormInput, FormTextarea } from '@/components/shared/FormField';
 import ImageUploader from '@/components/shared/ImageUploader';
 
 export default function CampaignForm({ initialData, onSubmit, isLoading, submitText = 'Save Campaign' }) {
@@ -33,9 +34,8 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="title"
         control={control}
         render={({ field }) => (
-          <Input
+          <FormInput
             {...field}
-            onValueChange={field.onChange}
             label="Campaign Title"
             placeholder="My Amazing Campaign"
             errorMessage={errors.title?.message}
@@ -65,9 +65,8 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="shortDescription"
         control={control}
         render={({ field }) => (
-          <Input
+          <FormInput
             {...field}
-            onValueChange={field.onChange}
             label="Short Description"
             placeholder="A brief one-liner about your campaign"
             errorMessage={errors.shortDescription?.message}
@@ -80,9 +79,8 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="description"
         control={control}
         render={({ field }) => (
-          <TextArea
+          <FormTextarea
             {...field}
-            onValueChange={field.onChange}
             label="Full Description"
             placeholder="Tell your story... Why should people support you?"
             minRows={6}
@@ -96,9 +94,8 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="rewardInfo"
         control={control}
         render={({ field }) => (
-          <TextArea
+          <FormTextarea
             {...field}
-            onValueChange={field.onChange}
             label="Reward Info"
             placeholder="What rewards do supporters get? (e.g. T-shirt, thank-you note, etc.)"
             minRows={3}
@@ -133,9 +130,9 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="goalAmount"
         control={control}
         render={({ field }) => (
-          <Input
+          <FormInput
             value={field.value}
-            onValueChange={(v) => field.onChange(parseFloat(v) || 0)}
+            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
             type="number"
             label="Funding Goal ($)"
             placeholder="10000"
@@ -150,9 +147,8 @@ export default function CampaignForm({ initialData, onSubmit, isLoading, submitT
         name="endDate"
         control={control}
         render={({ field }) => (
-          <Input
+          <FormInput
             {...field}
-            onValueChange={field.onChange}
             type="date"
             label="End Date"
             errorMessage={errors.endDate?.message}

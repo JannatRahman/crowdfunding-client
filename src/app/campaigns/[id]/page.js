@@ -7,7 +7,8 @@ import { useCreateContribution } from '@/hooks/useContributions';
 import { useAuth } from '@/providers/AuthProvider';
 import api from '@/lib/api';
 import { formatCurrency, getProgressPercent, getDaysLeft, formatDate } from '@/utils/formatters';
-import { Button, Input, TextArea, Chip } from '@heroui/react';
+import { Button, Chip } from '@heroui/react';
+import { FormInput, FormTextarea } from '@/components/shared/FormField';
 import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
 import ProgressBar from '@/components/campaign/ProgressBar';
 import CountdownTimer from '@/components/campaign/CountdownTimer';
@@ -166,12 +167,12 @@ export default function CampaignDetailPage() {
                   </div>
                 </div>
 
-                <Input
+                <FormInput
                   type="number"
                   name="Contribution_amount"
                   placeholder="Custom amount"
                   value={amount}
-                  onValueChange={setAmount}
+                  onChange={(e) => setAmount(e.target.value)}
                   startContent={<span className="text-gray-400">$</span>}
                   min="1"
                 />
@@ -207,10 +208,10 @@ export default function CampaignDetailPage() {
         <SimpleModalHeader>Confirm Contribution</SimpleModalHeader>
         <SimpleModalBody>
           <PaymentSummary campaign={campaign} amount={parseFloat(amount || 0)} />
-          <TextArea
+          <FormTextarea
             placeholder="Add a message (optional)"
             value={message}
-            onValueChange={setMessage}
+            onChange={(e) => setMessage(e.target.value)}
             minRows={2}
           />
           <label className="flex items-center gap-2 text-sm">

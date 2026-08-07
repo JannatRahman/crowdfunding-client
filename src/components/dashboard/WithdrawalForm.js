@@ -4,7 +4,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { creatorWithdrawalSchema } from '@/utils/validations';
 import { useCreateWithdrawal } from '@/hooks/useWithdrawals';
-import { Button, Input } from '@heroui/react';
+import { Button } from '@heroui/react';
+import { FormInput } from '@/components/shared/FormField';
 import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
 
 export default function WithdrawalForm({ availableCredits = 0, isOpen, onClose }) {
@@ -62,9 +63,9 @@ export default function WithdrawalForm({ availableCredits = 0, isOpen, onClose }
               name="withdrawal_credit"
               control={control}
               render={({ field }) => (
-                <Input
+                <FormInput
                   value={field.value}
-                  onValueChange={(v) => field.onChange(parseInt(v) || 0)}
+                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                   type="number"
                   label="Credits To Withdraw"
                   placeholder="200"
@@ -79,7 +80,7 @@ export default function WithdrawalForm({ availableCredits = 0, isOpen, onClose }
               <label className="text-xs font-bold text-cf-brown uppercase mb-1 block">
                 Withdraw Amount ($)
               </label>
-              <Input
+              <FormInput
                 value={calculatedUSD ? `$${calculatedUSD.toFixed(2)}` : '$0.00'}
                 readOnly
                 disabled
@@ -117,9 +118,8 @@ export default function WithdrawalForm({ availableCredits = 0, isOpen, onClose }
               name="account_number"
               control={control}
               render={({ field }) => (
-                <Input
+                <FormInput
                   {...field}
-                  onValueChange={field.onChange}
                   label="Account Number / Wallet Phone Number"
                   placeholder="e.g. acct_1234... or +88017..."
                   errorMessage={errors.account_number?.message}

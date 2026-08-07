@@ -1,6 +1,6 @@
 'use client';
 
-import { Input } from '@heroui/react';
+import { FormInput } from '@/components/shared/FormField';
 import { CAMPAIGN_CATEGORIES } from '@/utils/constants';
 
 const sortOptions = [
@@ -14,10 +14,10 @@ const sortOptions = [
 export default function CampaignFilters({ filters, onFilterChange }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8">
-      <Input
+      <FormInput
         placeholder="Search campaigns..."
         value={filters.search || ''}
-        onValueChange={(v) => onFilterChange({ ...filters, search: v })}
+        onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
         className="flex-1"
         startContent={
           <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

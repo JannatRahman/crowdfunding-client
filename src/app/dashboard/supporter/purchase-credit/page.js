@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Input, Card, CardContent } from '@heroui/react';
+import { Button, Card, CardContent } from '@heroui/react';
+import { FormInput } from '@/components/shared/FormField';
 import api from '@/lib/api';
 import { useAuth } from '@/providers/AuthProvider';
 import { formatCurrency } from '@/utils/formatters';
@@ -140,14 +141,14 @@ export default function PurchaseCreditPage() {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-bold text-cf-dark block mb-2">Purchase Custom Amount</label>
-              <Input
+              <FormInput
                 type="number"
                 placeholder="Enter custom amount in USD"
                 value={amount}
-                onValueChange={setAmount}
+                onChange={(e) => setAmount(e.target.value)}
                 startContent={<span className="text-gray-400 font-bold">$</span>}
                 min="1"
-                isDisabled={isLoading}
+                disabled={isLoading}
                 classNames={{
                   inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark rounded-xl",
                 }}

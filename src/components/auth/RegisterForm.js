@@ -6,7 +6,8 @@ import { registerSchema } from '@/utils/validations';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Button, Input } from '@heroui/react';
+import { Button } from '@heroui/react';
+import { FormInput } from '@/components/shared/FormField';
 import { ROUTES } from '@/utils/constants';
 import Link from 'next/link';
 import ImageUploader from '@/components/shared/ImageUploader';
@@ -76,18 +77,12 @@ export default function RegisterForm() {
           name="name"
           control={control}
           render={({ field }) => (
-            <Input
+            <FormInput
               {...field}
-              onValueChange={field.onChange}
               label="Full Name"
               placeholder="John Doe"
               errorMessage={errors.name?.message}
               isInvalid={!!errors.name}
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark",
-                label: "text-cf-dark font-medium",
-              }}
             />
           )}
         />
@@ -96,19 +91,13 @@ export default function RegisterForm() {
           name="email"
           control={control}
           render={({ field }) => (
-            <Input
+            <FormInput
               {...field}
-              onValueChange={field.onChange}
               type="email"
               label="Email Address"
               placeholder="you@example.com"
               errorMessage={errors.email?.message}
               isInvalid={!!errors.email}
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark",
-                label: "text-cf-dark font-medium",
-              }}
             />
           )}
         />
@@ -133,19 +122,13 @@ export default function RegisterForm() {
           name="password"
           control={control}
           render={({ field }) => (
-            <Input
+            <FormInput
               {...field}
-              onValueChange={field.onChange}
               type="password"
               label="Password"
               placeholder="••••••••"
               errorMessage={errors.password?.message}
               isInvalid={!!errors.password}
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark",
-                label: "text-cf-dark font-medium",
-              }}
             />
           )}
         />
@@ -154,19 +137,13 @@ export default function RegisterForm() {
           name="confirmPassword"
           control={control}
           render={({ field }) => (
-            <Input
+            <FormInput
               {...field}
-              onValueChange={field.onChange}
               type="password"
               label="Confirm Password"
               placeholder="••••••••"
               errorMessage={errors.confirmPassword?.message}
               isInvalid={!!errors.confirmPassword}
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-cf-tan hover:border-cf-brown focus-within:!border-cf-dark",
-                label: "text-cf-dark font-medium",
-              }}
             />
           )}
         />
