@@ -6,6 +6,7 @@ import CampaignGrid from '@/components/campaign/CampaignGrid';
 import CampaignFilters from '@/components/campaign/CampaignFilters';
 import Pagination from '@/components/shared/Pagination';
 import { useDebounce } from '@/hooks/useDebounce';
+import { getDaysLeft } from '@/utils/formatters';
 
 export default function CampaignsPage() {
   const [filters, setFilters] = useState({
@@ -22,10 +23,13 @@ export default function CampaignsPage() {
     sort: filters.sort,
     page: filters.page,
     limit: 12,
-    status: 'active',
   });
 
-  const campaigns = data?.campaigns || [];
+  const campaigns = (data?.campaigns || []).filter((c) => {
+    const daysLeft = getDaysLeft(c.endDate || c.deadline);
+    const isValidStatus = c.status === 'active' || c.status === 'approved';
+    return daysLeft > 0 && isValidStatus;
+  });
   const pagination = data?.pagination || { pages: 1, page: 1 };
 
   return (

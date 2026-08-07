@@ -42,7 +42,8 @@ export default function SupporterPaymentHistoryPage() {
                 <tr>
                   <th className="px-6 py-4.5">Transaction ID</th>
                   <th className="px-6 py-4.5">Type</th>
-                  <th className="px-6 py-4.5 text-right">Amount</th>
+                  <th className="px-6 py-4.5 text-center">Credits Added</th>
+                  <th className="px-6 py-4.5 text-right">Amount Paid</th>
                   <th className="px-6 py-4.5">Date</th>
                   <th className="px-6 py-4.5 text-center">Status</th>
                 </tr>
@@ -53,6 +54,9 @@ export default function SupporterPaymentHistoryPage() {
                     <td className="px-6 py-4 font-mono text-xs text-cf-brown">{tx._id}</td>
                     <td className="px-6 py-4 whitespace-nowrap capitalize">
                       {tx.type === 'credit_purchase' ? 'Credit Purchase 💳' : 'Contribution 💝'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center font-bold text-green-600">
+                      +{tx.credits || tx.amount * 10}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right font-bold text-cf-dark">
                       {formatCurrency(tx.amount)}

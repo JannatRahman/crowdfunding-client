@@ -94,3 +94,44 @@ export function useSubmitReport() {
     },
   });
 }
+
+// ─── Admin Campaign Approval Hooks ───────────────────────────────────────────
+
+export function useAdminPendingCampaigns() {
+  return useQuery({
+    queryKey: ['adminPendingCampaigns'],
+    queryFn: async () => {
+      const { data } = await api.get('/api/admin/campaigns/pending');
+      return data;
+    },
+  });
+}
+
+export function useApproveCampaign() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const { data } = await api.patch(`/api/admin/campaigns/${id}/approve`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+    },
+  });
+}
+
+export function useRejectCampaign() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }) => {
+      const { data } = await api.patch(`/api/admin/campaigns/${id}/reject`, { reason });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminPendingCampaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+    },
+  });
+}

@@ -47,6 +47,7 @@ export default function CampaignDetailPage() {
       const { data: sessionData } = await api.post('/api/payments/create-session', {
         campaignId: campaign._id,
         amount: parseFloat(amount),
+        Contribution_amount: parseFloat(amount),
         message,
         anonymous,
       });
@@ -167,6 +168,7 @@ export default function CampaignDetailPage() {
 
                 <Input
                   type="number"
+                  name="Contribution_amount"
                   placeholder="Custom amount"
                   value={amount}
                   onValueChange={setAmount}
