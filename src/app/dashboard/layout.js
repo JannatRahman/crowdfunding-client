@@ -3,7 +3,7 @@
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import Sidebar, { supporterLinks, creatorLinks, adminLinks } from '@/components/shared/Sidebar';
+import Sidebar, { Icon, isActive, supporterLinks, creatorLinks, adminLinks } from '@/components/shared/Sidebar';
 import { PageLoader } from '@/components/shared/LoadingSpinner';
 import { ROUTES } from '@/utils/constants';
 import Link from 'next/link';
@@ -49,6 +49,15 @@ export default function DashboardLayout({ children }) {
 
   const links = role === 'admin' ? adminLinks : role === 'creator' ? creatorLinks : supporterLinks;
 
+  let activeHref;
+  let bestLen = -1;
+  for (const link of links) {
+    if (isActive(pathname, link.href) && link.href.length > bestLen) {
+      bestLen = link.href.length;
+      activeHref = link.href;
+    }
+  }
+
   return (
     <div className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)]">
       {/* Sidebar for Desktop */}
@@ -57,18 +66,18 @@ export default function DashboardLayout({ children }) {
       {/* Mobile Horizontal Sub-Navigation */}
       <div className="lg:hidden flex overflow-x-auto gap-2 py-3.5 px-4 bg-cf-cream border-b border-cf-tan shadow-sm scrollbar-none sticky top-20 z-40">
         {links.map((link) => {
-          const isActive = pathname === link.href;
+          const isActiveLink = link.href === activeHref;
           return (
             <Link
               key={link.href}
               href={link.href}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-                isActive
+                isActiveLink
                   ? 'bg-cf-dark text-cf-cream shadow-sm'
                   : 'text-cf-brown bg-white/40 hover:bg-white/70 border border-cf-tan/30'
               }`}
             >
-              <span>{link.icon}</span>
+              <Icon name={link.icon} />
               {link.label}
             </Link>
           );

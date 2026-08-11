@@ -3,10 +3,17 @@
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAuth } from '@/providers/AuthProvider';
 import { authClient } from '@/lib/auth-client';
 import { ROUTES, ROLES } from '@/utils/constants';
 import NotificationBell from '@/components/dashboard/NotificationBell';
+import Logo from '@/components/shared/Logo';
+
+const navItems = [
+  { label: 'Home', href: ROUTES.HOME },
+  { label: 'Explore Campaigns', href: ROUTES.CAMPAIGNS },
+];
 
 export default function Navbar() {
   const { user, isAuthenticated, role } = useAuth();
@@ -26,78 +33,119 @@ export default function Navbar() {
     return ROUTES.SUPPORTER_DASHBOARD;
   };
 
-  const isDashboard = pathname.startsWith('/dashboard');
+  const isActive = (href) =>
+    href === ROUTES.HOME ? pathname === href : pathname.startsWith(href);
 
   return (
-    <nav className="sticky top-0 z-50 bg-cf-cream/90 backdrop-blur-md border-b border-cf-tan shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <header className="sticky top-0 z-50 bg-cf-cream/85 backdrop-blur-xl border-b border-cf-tan/70 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 gap-4">
           {/* Logo */}
-          <Link href={ROUTES.HOME} className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cf-dark rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-cf-cream font-bold text-lg font-serif">C</span>
-            </div>
-            <span className="font-bold text-2xl text-cf-dark tracking-tight">CrowdFund</span>
-          </Link>
+          <Logo />
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
+                    active
+                      ? 'text-cf-dark'
+                      : 'text-cf-brown hover:text-cf-dark hover:bg-white/60'
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-0 bg-white/70 border border-cf-tan/60 rounded-xl"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Right Actions */}
+          <div className="hidden md:flex items-center gap-3">
             {!isAuthenticated ? (
               <>
-                <Link href={ROUTES.CAMPAIGNS} className="text-cf-brown hover:text-cf-dark font-semibold transition-colors">
-                  Explore Campaigns
+                <Link
+                  href={ROUTES.LOGIN}
+                  className="px-4 py-2 text-sm font-semibold text-cf-brown hover:text-cf-dark rounded-xl transition-colors"
+                >
+                  Log In
                 </Link>
-                <Link href={ROUTES.LOGIN} className="text-cf-brown hover:text-cf-dark font-semibold transition-colors">
-                  Login
-                </Link>
-                <Link href={ROUTES.REGISTER} className="px-5 py-2.5 bg-cf-brown hover:bg-cf-dark text-white rounded-xl font-semibold transition-all shadow-sm">
-                  Register
+                <Link
+                  href={ROUTES.REGISTER}
+                  className="px-5 py-2.5 text-sm font-bold text-white bg-cf-dark hover:bg-black rounded-xl shadow-sm transition-all hover:shadow-md hover:-translate-y-px"
+                >
+                  Get Started
                 </Link>
               </>
             ) : (
               <>
                 {/* Available Credits */}
-                <div className="flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-xl text-green-700 font-semibold shadow-sm">
-                  <span className="text-xs uppercase tracking-wider opacity-95">Credits</span>
-                  <span className="text-md font-bold">${user?.credits !== undefined ? user.credits : 0}</span>
+                <div className="flex items-center gap-2 px-3.5 py-2 bg-white/70 border border-green-200 rounded-xl text-green-700 font-semibold shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider opacity-90">
+                    Credits
+                  </span>
+                  <span className="text-sm font-extrabold">${user?.credits ?? 0}</span>
                 </div>
 
                 {/* Vertical Divider */}
-                <div className="h-6 w-[1px] bg-cf-tan" />
+                <div className="h-6 w-px bg-cf-tan/80" />
 
-                {/* User Image, User Role, User Name Profile Card */}
-                <Link href={dashboardLink()} className="flex items-center gap-3 hover:bg-white/40 p-2 rounded-xl transition-all duration-200 border border-transparent hover:border-cf-tan">
-                  {user?.image ? (
-                    <img 
-                      src={user.image} 
-                      alt={user.name} 
-                      className="w-10 h-10 rounded-full object-cover border-2 border-cf-tan shadow-sm" 
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-cf-brown flex items-center justify-center text-cf-cream font-bold shadow-sm border border-cf-tan">
-                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                    </div>
-                  )}
-                  <div className="flex flex-col text-left">
-                    <span className="font-bold text-sm text-cf-dark line-clamp-1">{user?.name}</span>
-                    <span className="text-[10px] uppercase font-bold text-cf-brown tracking-wider">{role || 'Supporter'}</span>
-                  </div>
-                </Link>
-
-                {/* Vertical Divider */}
-                <div className="h-6 w-[1px] bg-cf-tan" />
-
-                {/* Notification */}
+                {/* Notifications */}
                 <div className="flex items-center">
                   <NotificationBell />
                 </div>
 
-                {/* Logout Button */}
-                <button 
-                  onClick={handleLogout} 
-                  className="px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 hover:text-red-800 rounded-xl transition-colors"
+                {/* User Profile Card */}
+                <Link
+                  href={dashboardLink()}
+                  className="flex items-center gap-2.5 pl-1 pr-2.5 py-1.5 rounded-2xl border border-transparent hover:border-cf-tan hover:bg-white/70 transition-all"
                 >
-                  Logout
+                  {user?.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="w-9 h-9 rounded-full object-cover ring-2 ring-cf-tan"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-cf-brown to-cf-tan flex items-center justify-center text-cf-dark font-bold text-sm">
+                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <div className="flex flex-col leading-tight text-left">
+                    <span className="text-sm font-bold text-cf-dark line-clamp-1 max-w-[110px]">
+                      {user?.name}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-cf-brown">
+                      {role || 'Supporter'}
+                    </span>
+                  </div>
+                </Link>
+
+                {/* Logout */}
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-cf-brown hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                  title="Logout"
+                  aria-label="Logout"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                    />
+                  </svg>
                 </button>
               </>
             )}
@@ -105,71 +153,124 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-cf-dark rounded-lg hover:bg-white/40"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden p-2 rounded-xl text-cf-dark hover:bg-white/60 transition-colors"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Toggle navigation menu"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
         </div>
+      </nav>
 
-        {/* Mobile Nav */}
+      {/* Mobile Nav */}
+      <AnimatePresence>
         {mobileOpen && (
-          <div className="md:hidden pb-6 space-y-4 pt-2 border-t border-cf-tan animate-in fade-in slide-in-from-top duration-200">
-            {!isAuthenticated ? (
-              <>
-                <Link href={ROUTES.CAMPAIGNS} className="block px-2 py-2 text-cf-brown font-semibold">
-                  Explore Campaigns
-                </Link>
-                <Link href={ROUTES.LOGIN} className="block px-2 py-2 text-cf-brown font-semibold">
-                  Login
-                </Link>
-                <Link href={ROUTES.REGISTER} className="block px-2 py-2.5 bg-cf-brown text-white text-center rounded-xl font-semibold">
-                  Register
-                </Link>
-              </>
-            ) : (
-              <>
-                <div className="px-2 py-3 flex items-center gap-3 border-b border-cf-tan/50 mb-2">
-                  {user?.image ? (
-                    <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full object-cover" />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-cf-brown flex items-center justify-center text-cf-cream font-bold">
-                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                    </div>
-                  )}
-                  <div>
-                    <p className="font-bold text-cf-dark">{user?.name}</p>
-                    <p className="text-xs uppercase font-bold text-cf-brown tracking-wider">{role}</p>
-                    <p className="text-sm font-semibold text-green-600 mt-1">Credits: ${user?.credits || 0}</p>
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="md:hidden overflow-hidden bg-cf-cream border-t border-cf-tan/70"
+          >
+            <div className="px-4 py-5 space-y-1.5">
+              {!isAuthenticated ? (
+                <>
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isActive(item.href)
+                          ? 'bg-white/70 text-cf-dark'
+                          : 'text-cf-brown hover:bg-white/60 hover:text-cf-dark'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <div className="pt-3 mt-3 border-t border-cf-tan/60 flex gap-3">
+                    <Link
+                      href={ROUTES.LOGIN}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 text-center px-4 py-2.5 text-sm font-bold text-cf-brown border border-cf-tan rounded-xl hover:bg-white/60 transition-colors"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      href={ROUTES.REGISTER}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 text-center px-4 py-2.5 text-sm font-bold text-white bg-cf-dark hover:bg-black rounded-xl transition-colors"
+                    >
+                      Get Started
+                    </Link>
                   </div>
-                </div>
-                
-                <Link href={dashboardLink()} className="block px-2 py-2 text-cf-brown font-semibold hover:text-cf-dark">
-                  Dashboard Home
-                </Link>
+                </>
+              ) : (
+                <>
+                  <div className="px-3 py-3 flex items-center gap-3 rounded-xl bg-white/60 border border-cf-tan/50 mb-2">
+                    {user?.image ? (
+                      <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-cf-tan" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-cf-brown to-cf-tan flex items-center justify-center text-cf-dark font-bold">
+                        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-bold text-cf-dark truncate">{user?.name}</p>
+                      <p className="text-[10px] uppercase font-bold text-cf-brown tracking-wider">{role}</p>
+                      <p className="text-sm font-semibold text-green-600 mt-0.5">
+                        Credits: ${user?.credits ?? 0}
+                      </p>
+                    </div>
+                  </div>
 
-                <div className="flex items-center justify-between px-2 py-2">
-                  <span className="text-sm font-semibold text-cf-brown">Notifications</span>
-                  <NotificationBell />
-                </div>
+                  <Link
+                    href={dashboardLink()}
+                    onClick={() => setMobileOpen(false)}
+                    className="block px-3 py-2.5 rounded-xl text-sm font-semibold text-cf-brown hover:bg-white/60 hover:text-cf-dark transition-colors"
+                  >
+                    Dashboard Home
+                  </Link>
 
-                <button 
-                  onClick={handleLogout} 
-                  className="block w-full text-left px-2 py-2.5 text-red-600 font-semibold bg-red-50/50 rounded-xl"
-                >
-                  Logout
-                </button>
-              </>
-            )}
-          </div>
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`block px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                        isActive(item.href)
+                          ? 'bg-white/70 text-cf-dark'
+                          : 'text-cf-brown hover:bg-white/60 hover:text-cf-dark'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+
+                  <div className="flex items-center justify-between px-3 py-2.5">
+                    <span className="text-sm font-semibold text-cf-brown">Notifications</span>
+                    <NotificationBell />
+                  </div>
+
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-3 py-2.5 text-sm font-bold text-red-600 bg-red-50/60 hover:bg-red-100 rounded-xl transition-colors"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
+          </motion.div>
         )}
-      </div>
-    </nav>
+      </AnimatePresence>
+    </header>
   );
 }

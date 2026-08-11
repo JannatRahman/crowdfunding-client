@@ -9,13 +9,19 @@ import {
 } from '@/hooks/useAdmin';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { motion } from 'framer-motion';
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
-function StatCard({ icon, label, value, accent, isCurrency }) {
+function StatCard({ icon, label, value, accent, isCurrency, index }) {
   return (
-    <div
-      style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e5e0d8', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '18px' }}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.05 * index, ease: 'easeOut' }}
+      style={{ background: 'white', borderRadius: '16px', padding: '24px', border: '1px solid #e5e0d8', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '18px', transition: 'transform 0.25s, box-shadow 0.25s' }}
+      onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,0,0,0.10)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 12px rgba(0,0,0,0.05)'; }}
     >
       <div
         style={{ width: 56, height: 56, borderRadius: 14, background: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}
@@ -28,7 +34,7 @@ function StatCard({ icon, label, value, accent, isCurrency }) {
           {isCurrency ? formatCurrency(value) : Number(value).toLocaleString()}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -240,17 +246,21 @@ export default function AdminDashboard() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
       {/* Header */}
-      <div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#1a1a1a', margin: 0, marginBottom: 4 }}>Admin Dashboard</h1>
-        <p style={{ fontSize: 14, color: '#888', margin: 0 }}>Platform overview and campaign moderation</p>
-      </div>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <div style={{ background: 'linear-gradient(135deg,#8B4513,#B3572E)', borderRadius: 20, padding: '28px 32px', color: 'white', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', right: -30, top: -30, width: 160, height: 160, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+          <div style={{ position: 'absolute', right: 40, bottom: -50, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+          <h1 style={{ fontSize: 26, fontWeight: 800, margin: 0, position: 'relative' }}>Admin Dashboard</h1>
+          <p style={{ fontSize: 14, margin: '6px 0 0', opacity: 0.85, position: 'relative' }}>Platform overview and campaign moderation</p>
+        </div>
+      </motion.div>
 
       {/* Stat Cards */}
       {isLoading ? (
         <LoadingSpinner />
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
-          {statCards.map((s) => (
+          {statCards.map((s, idx) => (
             <StatCard
               key={s.key}
               icon={s.icon}
@@ -258,13 +268,14 @@ export default function AdminDashboard() {
               value={stats[s.key] ?? 0}
               accent={s.accent}
               isCurrency={!!s.isCurrency}
+              index={idx}
             />
           ))}
         </div>
       )}
 
       {/* Campaign Approvals */}
-      <div style={{ background: 'white', borderRadius: 20, border: '1px solid #e5e0d8', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} style={{ background: 'white', borderRadius: 20, border: '1px solid #e5e0d8', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #ede9e2', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <h2 style={{ fontSize: 17, fontWeight: 700, color: '#1a1a1a', margin: 0, marginBottom: 2 }}>Campaign Approvals</h2>
@@ -277,7 +288,7 @@ export default function AdminDashboard() {
         <div style={{ padding: '8px 0' }}>
           <CampaignApprovalsTable />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

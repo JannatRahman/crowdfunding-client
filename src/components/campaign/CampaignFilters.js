@@ -11,6 +11,9 @@ const sortOptions = [
   { key: 'ending-soon', label: 'Ending Soon' },
 ];
 
+const selectClasses =
+  'w-full sm:w-48 px-4 py-2.5 border border-cf-tan rounded-xl text-sm font-semibold text-cf-dark bg-white shadow-sm outline-none focus:border-cf-dark transition-colors cursor-pointer';
+
 export default function CampaignFilters({ filters, onFilterChange }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-8">
@@ -19,8 +22,11 @@ export default function CampaignFilters({ filters, onFilterChange }) {
         value={filters.search || ''}
         onChange={(e) => onFilterChange({ ...filters, search: e.target.value })}
         className="flex-1"
+        classNames={{
+          inputWrapper: 'border border-cf-tan hover:border-cf-dark/50 focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200',
+        }}
         startContent={
-          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-cf-brown/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         }
@@ -29,7 +35,7 @@ export default function CampaignFilters({ filters, onFilterChange }) {
       <select
         value={filters.category || ''}
         onChange={(e) => onFilterChange({ ...filters, category: e.target.value })}
-        className="w-full sm:w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className={selectClasses}
       >
         <option value="">All Categories</option>
         {CAMPAIGN_CATEGORIES.map((c) => (
@@ -40,7 +46,7 @@ export default function CampaignFilters({ filters, onFilterChange }) {
       <select
         value={filters.sort || 'newest'}
         onChange={(e) => onFilterChange({ ...filters, sort: e.target.value })}
-        className="w-full sm:w-48 p-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className={selectClasses}
       >
         {sortOptions.map((item) => (
           <option key={item.key} value={item.key}>{item.label}</option>

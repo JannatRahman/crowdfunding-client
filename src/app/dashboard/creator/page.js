@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/providers/AuthProvider';
 import { useMyCampaigns } from '@/hooks/useCampaigns';
+import useCountUp from '@/hooks/useCountUp';
 import { usePendingContributions, useApproveContribution, useRejectContribution } from '@/hooks/useContributions';
 import { formatCurrency, getDaysLeft, formatDate } from '@/utils/formatters';
 import EmptyState from '@/components/shared/EmptyState';
@@ -10,6 +11,13 @@ import { Button, Card, CardContent, Chip } from '@heroui/react';
 import { ROUTES } from '@/utils/constants';
 import { useState } from 'react';
 import SimpleModal, { SimpleModalHeader, SimpleModalBody, SimpleModalFooter } from '@/components/shared/SimpleModal';
+import { motion } from 'framer-motion';
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay, ease: 'easeOut' },
+});
 
 export default function CreatorDashboard() {
   const { user } = useAuth();
@@ -35,6 +43,10 @@ export default function CreatorDashboard() {
 
   // 3. Total amount raised across all campaigns
   const totalRaised = campaigns.reduce((sum, c) => sum + (c.currentAmount || 0), 0);
+
+  const totalCampaignsCount = useCountUp(totalCampaigns, { duration: 700 });
+  const activeCampaignsCount = useCountUp(activeCampaigns, { duration: 700 });
+  const totalRaisedCount = useCountUp(totalRaised, { duration: 1100, decimals: 0 });
 
   const handleViewContribution = (contr) => {
     setSelectedContribution(contr);
@@ -66,7 +78,7 @@ export default function CreatorDashboard() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div {...fadeUp(0)} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-extrabold text-cf-dark tracking-tight">Creator Dashboard</h1>
           <p className="text-cf-brown font-medium mt-1">Monitor your campaign performance and review contributions</p>
@@ -76,49 +88,55 @@ export default function CreatorDashboard() {
             + New Campaign
           </Button>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-cf-cream text-cf-dark flex items-center justify-center text-2xl font-bold">
-              🚀
-            </div>
-            <div>
-              <p className="text-4xl font-extrabold text-cf-dark">{totalCampaigns}</p>
-              <p className="text-sm font-semibold text-cf-brown mt-0.5">Total Campaigns</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center text-2xl font-bold">
-              🟢
-            </div>
-            <div>
-              <p className="text-4xl font-extrabold text-green-700">{activeCampaigns}</p>
-              <p className="text-sm font-semibold text-cf-brown mt-0.5">Active Campaigns</p>
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div {...fadeUp(0.05)}>
+          <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-cf-cream text-cf-dark flex items-center justify-center text-2xl font-bold">
+                🚀
+              </div>
+              <div>
+                <p className="text-4xl font-extrabold text-cf-dark">{totalCampaignsCount}</p>
+                <p className="text-sm font-semibold text-cf-brown mt-0.5">Total Campaigns</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
-        <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center text-2xl font-bold">
-              💰
-            </div>
-            <div>
-              <p className="text-3xl font-extrabold text-cf-dark">{formatCurrency(totalRaised)}</p>
-              <p className="text-sm font-semibold text-cf-brown mt-0.5">Total Amount Raised</p>
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div {...fadeUp(0.1)}>
+          <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-green-50 text-green-700 flex items-center justify-center text-2xl font-bold">
+                🟢
+              </div>
+              <div>
+                <p className="text-4xl font-extrabold text-green-700">{activeCampaignsCount}</p>
+                <p className="text-sm font-semibold text-cf-brown mt-0.5">Active Campaigns</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div {...fadeUp(0.15)}>
+          <Card className="border border-cf-tan bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <CardContent className="p-6 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center text-2xl font-bold">
+                💰
+              </div>
+              <div>
+                <p className="text-3xl font-extrabold text-cf-dark">{formatCurrency(totalRaisedCount)}</p>
+                <p className="text-sm font-semibold text-cf-brown mt-0.5">Total Amount Raised</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Contributions To Review Table Section */}
-      <div className="bg-white rounded-3xl border border-cf-tan shadow-sm overflow-hidden">
+      <motion.div {...fadeUp(0.2)} className="bg-white rounded-3xl border border-cf-tan shadow-sm overflow-hidden">
         <div className="p-6 border-b border-cf-tan/30 bg-cf-cream/20">
           <h2 className="text-xl font-bold text-cf-dark">Contributions to Review</h2>
           <p className="text-sm text-cf-brown font-medium mt-1">These contributions are pending your approval to count towards your campaigns</p>
@@ -190,7 +208,7 @@ export default function CreatorDashboard() {
             </table>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {/* Detail Modal */}
       {selectedContribution && (

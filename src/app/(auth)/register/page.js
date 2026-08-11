@@ -1,19 +1,30 @@
-'use client';
-
 import RegisterForm from '@/components/auth/RegisterForm';
+import AuthShell from '@/components/auth/AuthShell';
+import { ROUTES } from '@/utils/constants';
+import Link from 'next/link';
+
+export const metadata = {
+  title: 'Create Account',
+  description: 'Join CrowdFund as a creator or supporter, launch your first campaign, and start making an impact.',
+};
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-cf-dark tracking-tight">Create Account</h1>
-          <p className="text-cf-brown font-medium mt-2">Join our crowdfunding community</p>
-        </div>
-        <div className="bg-white rounded-3xl shadow-xl border border-cf-tan p-8">
-          <RegisterForm />
-        </div>
-      </div>
-    </div>
+    <AuthShell
+      title="Create Your Account"
+      subtitle="Join CrowdFund as a creator or supporter in under a minute."
+      footer={
+        <>
+          <p className="text-sm text-gray-500 font-semibold">
+            Already have an account?{' '}
+            <Link href={ROUTES.LOGIN} className="text-cf-dark hover:text-black hover:underline font-extrabold transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </>
+      }
+    >
+      <RegisterForm />
+    </AuthShell>
   );
 }

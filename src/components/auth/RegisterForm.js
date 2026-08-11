@@ -7,15 +7,16 @@ import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { FormInput } from '@/components/shared/FormField';
+import { FormInput, PasswordToggle } from '@/components/shared/FormField';
 import { ROUTES } from '@/utils/constants';
-import Link from 'next/link';
 import ImageUploader from '@/components/shared/ImageUploader';
 import { toast } from 'react-hot-toast';
 
 export default function RegisterForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema),
@@ -126,11 +127,12 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormInput
               {...field}
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               label="Password"
               placeholder="••••••••"
               errorMessage={errors.password?.message}
               isInvalid={!!errors.password}
+              endContent={<PasswordToggle show={showPassword} onToggle={() => setShowPassword((v) => !v)} />}
               classNames={{
                 label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
                 inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
@@ -145,11 +147,12 @@ export default function RegisterForm() {
           render={({ field }) => (
             <FormInput
               {...field}
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               label="Confirm Password"
               placeholder="••••••••"
               errorMessage={errors.confirmPassword?.message}
               isInvalid={!!errors.confirmPassword}
+              endContent={<PasswordToggle show={showConfirmPassword} onToggle={() => setShowConfirmPassword((v) => !v)} />}
               classNames={{
                 label: "text-gray-700 font-bold text-xs uppercase tracking-wider",
                 inputWrapper: "border border-gray-200/80 hover:border-cf-dark focus-within:!border-cf-dark rounded-xl bg-white shadow-sm transition-all duration-200",
@@ -213,7 +216,7 @@ export default function RegisterForm() {
 
         <Button 
           type="submit" 
-          className="w-full bg-cf-dark hover:bg-black text-cf-cream font-bold py-6 text-sm rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer select-none active:scale-[0.99]" 
+          className="w-full bg-gradient-to-r from-cf-dark to-cf-brown hover:from-cf-brown hover:to-cf-dark text-cf-cream font-bold py-6 text-sm rounded-xl shadow-lg shadow-cf-brown/25 hover:shadow-xl transition-all duration-300 cursor-pointer select-none active:scale-[0.99]" 
           isLoading={isLoading}
         >
           Create Account
@@ -231,7 +234,7 @@ export default function RegisterForm() {
 
       <Button 
         variant="bordered" 
-        className="w-full border border-gray-300 text-gray-700 font-bold py-6 hover:border-cf-dark hover:bg-cf-cream/10 rounded-xl transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.99]" 
+        className="w-full border border-gray-300 text-gray-700 font-bold py-6 hover:border-cf-dark hover:bg-cf-cream/40 rounded-xl transition-all duration-300 cursor-pointer shadow-sm active:scale-[0.99]" 
         onPress={handleGoogleLogin}
       >
         <svg className="w-4 h-4 mr-2.5" viewBox="0 0 24 24">
@@ -242,13 +245,6 @@ export default function RegisterForm() {
         </svg>
         Google
       </Button>
-
-      <p className="text-center text-xs text-gray-500 font-semibold">
-        Already have an account?{' '}
-        <Link href={ROUTES.LOGIN} className="text-cf-dark hover:text-black hover:underline font-extrabold transition-colors">
-          Sign in
-        </Link>
-      </p>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { ROUTES } from '@/utils/constants';
 import { motion } from 'framer-motion';
+import Logo from '@/components/shared/Logo';
 
 export default function Footer() {
   const socialLinks = [
@@ -49,12 +50,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
           <div className="md:col-span-5 space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-tr from-cf-brown to-cf-tan rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-cf-dark font-extrabold text-lg">C</span>
-              </div>
-              <span className="font-extrabold text-2xl tracking-tight text-cf-cream">CrowdFund</span>
-            </div>
+            <Logo light />
             <p className="text-sm text-cf-tan/70 max-w-sm leading-relaxed">
               Empowering global change-makers to share ideas, gain backers, and build a brighter future through community-driven crowdfunding.
             </p>

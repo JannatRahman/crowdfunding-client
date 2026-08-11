@@ -4,10 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import CampaignCard from '@/components/campaign/CampaignCard';
-import { Button, Chip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ROUTES, CAMPAIGN_CATEGORIES } from '@/utils/constants';
-import { formatCurrency } from '@/utils/formatters';
+import { ROUTES } from '@/utils/constants';
 
 // Import Swiper React components and modules
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -23,6 +22,7 @@ export default function HomeClient() {
   const { data, isLoading } = useCampaigns({ limit: 6, sort: 'most-funded', status: 'approved' });
   const campaigns = data?.campaigns || [];
   const [activeStep, setActiveStep] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   // Auto transition steps in How It Works if user is idle
   useEffect(() => {
@@ -152,27 +152,40 @@ export default function HomeClient() {
   return (
     <div className="bg-cf-cream min-h-screen text-cf-dark pb-1">
       {/* 1. Hero Section Slider */}
-      <section className="relative w-full h-[600px] md:h-[680px] bg-cf-dark overflow-hidden">
+      <section className="relative w-full h-[620px] md:h-[700px] bg-cf-dark overflow-hidden">
+        {/* Ambient floating orbs */}
+        <motion.div
+          animate={{ y: [0, -40, 0], opacity: [0.15, 0.35, 0.15] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          className="pointer-events-none absolute -top-20 -right-20 w-96 h-96 bg-cf-tan/40 rounded-full blur-3xl z-[5]"
+        />
+        <motion.div
+          animate={{ y: [0, 40, 0], opacity: [0.12, 0.3, 0.12] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+          className="pointer-events-none absolute bottom-0 left-1/4 w-[28rem] h-[28rem] bg-cf-brown/50 rounded-full blur-3xl z-[5]"
+        />
+
         <Swiper
           modules={[Navigation, Pagination, Autoplay, EffectFade]}
           effect="fade"
           speed={1000}
           autoplay={{ delay: 6000, disableOnInteraction: false }}
-          pagination={{ clickable: true, bulletActiveClass: 'bg-cf-tan w-6 rounded-full transition-all' }}
+          pagination={{ clickable: true, bulletActiveClass: 'bg-cf-tan w-8 rounded-full transition-all duration-500', bulletClass: 'swiper-pagination-bullet bg-white/40 opacity-100 w-8 rounded-full transition-all duration-500' }}
           navigation={{
             prevEl: '.hero-swiper-button-prev',
             nextEl: '.hero-swiper-button-next',
           }}
+          onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
           className="h-full w-full"
         >
           {heroBanners.map((banner) => (
             <SwiperSlide key={banner.id} className="relative h-full w-full">
               {/* Dark Overlay Background Image */}
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 scale-105" 
-                style={{ backgroundImage: `linear-gradient(to right, rgba(72, 52, 52, 0.95), rgba(72, 52, 52, 0.45)), url(${banner.image})` }} 
+              <div
+                className="absolute inset-0 bg-cover bg-center scale-105"
+                style={{ backgroundImage: `linear-gradient(to right, rgba(72, 52, 52, 0.96), rgba(72, 52, 52, 0.55) 55%, rgba(72, 52, 52, 0.35)), url(${banner.image})` }}
               />
-              
+
               <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
                 <div className="max-w-2xl text-left space-y-6">
                   <motion.div
@@ -180,32 +193,30 @@ export default function HomeClient() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <Chip 
-                      className="bg-cf-tan/20 text-cf-tan border border-cf-tan/30 py-1" 
-                      variant="flat"
-                    >
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-cf-tan/15 border border-cf-tan/30 rounded-full text-xs font-extrabold uppercase tracking-widest text-cf-tan backdrop-blur">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cf-tan animate-pulse" />
                       {banner.tag}
-                    </Chip>
+                    </span>
                   </motion.div>
-                  
-                  <motion.h1 
-                    initial={{ opacity: 0, y: 20 }}
+
+                  <motion.h1
+                    initial={{ opacity: 0, y: 24 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.6 }}
                     className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight"
                   >
                     {banner.title}
                   </motion.h1>
-                  
-                  <motion.p 
+
+                  <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4, duration: 0.6 }}
-                    className="text-lg md:text-xl text-cf-cream/80 font-medium leading-relaxed"
+                    className="text-lg md:text-xl text-cf-cream/85 font-medium leading-relaxed"
                   >
                     {banner.subtitle}
                   </motion.p>
-                  
+
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -213,7 +224,7 @@ export default function HomeClient() {
                     className="flex flex-wrap gap-4 pt-2"
                   >
                     <Link href={banner.link}>
-                      <Button size="lg" className="bg-cf-tan text-cf-dark font-extrabold hover:bg-cf-cream hover:scale-105 transition-all shadow-lg rounded-xl cursor-pointer">
+                      <Button size="lg" className="bg-cf-tan text-cf-dark font-extrabold hover:bg-cf-cream hover:scale-105 transition-all shadow-lg shadow-cf-tan/20 rounded-xl cursor-pointer">
                         {banner.cta}
                       </Button>
                     </Link>
@@ -227,15 +238,39 @@ export default function HomeClient() {
               </div>
             </SwiperSlide>
           ))}
-          
+
+          {/* Slide counter */}
+          <div className="absolute bottom-8 left-4 sm:left-6 lg:left-8 z-20 hidden md:flex items-center gap-3 text-cf-cream/80 font-bold">
+            <span className="text-2xl text-cf-tan">{String(activeSlide + 1).padStart(2, '0')}</span>
+            <span className="text-cf-cream/40 text-xl">/</span>
+            <span className="text-cf-cream/40 text-xl">{String(heroBanners.length).padStart(2, '0')}</span>
+          </div>
+
           {/* Custom Arrows */}
-          <div className="hero-swiper-button-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-xl bg-cf-dark/30 border border-cf-cream/20 text-cf-cream flex items-center justify-center cursor-pointer hover:bg-cf-tan hover:text-cf-dark transition-all select-none hidden md:flex shadow">
+          <div className="hero-swiper-button-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-xl bg-cf-dark/40 border border-cf-cream/25 text-cf-cream flex items-center justify-center cursor-pointer hover:bg-cf-tan hover:text-cf-dark transition-all select-none hidden md:flex shadow-lg backdrop-blur hover:scale-110">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 19l-7-7 7-7" /></svg>
           </div>
-          <div className="hero-swiper-button-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-xl bg-cf-dark/30 border border-cf-cream/20 text-cf-cream flex items-center justify-center cursor-pointer hover:bg-cf-tan hover:text-cf-dark transition-all select-none hidden md:flex shadow">
+          <div className="hero-swiper-button-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-xl bg-cf-dark/40 border border-cf-cream/25 text-cf-cream flex items-center justify-center cursor-pointer hover:bg-cf-tan hover:text-cf-dark transition-all select-none hidden md:flex shadow-lg backdrop-blur hover:scale-110">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
           </div>
         </Swiper>
+
+        {/* Stats strip */}
+        <div className="absolute bottom-0 inset-x-0 z-10 bg-cf-dark/40 backdrop-blur-md border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 grid grid-cols-3 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Credits raised', value: '$12M+' },
+              { label: 'Campaigns funded', value: '15K+' },
+              { label: 'Active supporters', value: '85K+' },
+              { label: 'Global reach', value: '120+' },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center md:text-left">
+                <p className="text-lg md:text-2xl font-extrabold text-cf-tan leading-none">{stat.value}</p>
+                <p className="text-[10px] md:text-xs text-cf-cream/70 font-semibold uppercase tracking-wider mt-1">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* 2. Top Funded Campaigns Section */}
@@ -248,7 +283,7 @@ export default function HomeClient() {
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-cf-dark">Top Funded Campaigns</h2>
             <p className="text-cf-brown/70 mt-2 text-base max-w-lg">
-              Discover the projects that have captured the community's imagination and raised the maximum credits on CrowdFund.
+              Discover the projects that have captured the community&apos;s imagination and raised the maximum credits on CrowdFund.
             </p>
           </div>
           <Link href={ROUTES.CAMPAIGNS}>
@@ -461,7 +496,7 @@ export default function HomeClient() {
               </div>
               <h2 className="text-3xl md:text-5xl font-extrabold text-cf-dark leading-tight">Platform Impact</h2>
               <p className="text-cf-brown/85 text-base leading-relaxed">
-                CrowdFund brings together a global community of innovators, makers, and general supporters. Over the past years, we've successfully helped launch thousands of campaigns, empowering independent efforts that change lives.
+                CrowdFund brings together a global community of innovators, makers, and general supporters. Over the past years, we&apos;ve successfully helped launch thousands of campaigns, empowering independent efforts that change lives.
               </p>
               <div className="flex gap-4 pt-2">
                 <Link href={ROUTES.REGISTER}>
