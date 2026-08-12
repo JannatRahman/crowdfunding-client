@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { formatCurrency, getProgressPercent, getDaysLeft, formatDate } from '@/utils/formatters';
+import { getOptimizedImage } from '@/utils/images';
 import { ROUTES } from '@/utils/constants';
 
 const CATEGORY_ICONS = {
@@ -23,10 +24,10 @@ export default function CampaignCard({ campaign, index = 0 }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
-      transition={{ delay: index * 0.06, duration: 0.5, ease: 'easeOut' }}
+      viewport={{ once: true, margin: '-30px' }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
       whileHover={{ y: -6 }}
       className="h-full"
     >
@@ -38,8 +39,10 @@ export default function CampaignCard({ campaign, index = 0 }) {
         <div className="relative h-52 overflow-hidden">
           {campaign.images?.[0] ? (
             <img
-              src={campaign.images[0]}
+              src={getOptimizedImage(campaign.images[0], 640, 70)}
               alt={campaign.title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
           ) : (
@@ -85,12 +88,9 @@ export default function CampaignCard({ campaign, index = 0 }) {
           {/* Progress */}
           <div className="mt-4">
             <div className="h-2 rounded-full bg-cf-cream overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                whileInView={{ width: `${Math.min(progress, 100)}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, ease: 'easeOut', delay: 0.2 + index * 0.05 }}
+              <div
                 className={`h-full rounded-full ${funded ? 'bg-emerald-500' : 'bg-gradient-to-r from-cf-brown to-cf-dark'}`}
+                style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
             <div className="mt-2 flex items-center justify-between">

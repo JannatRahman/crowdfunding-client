@@ -597,6 +597,8 @@ export default function HomeClient() {
                       <img 
                         src={t.photo} 
                         alt={t.name} 
+                        loading="lazy"
+                        decoding="async"
                         className="w-12 h-12 rounded-full object-cover border border-cf-brown/25 shadow-sm"
                       />
                       <div>
